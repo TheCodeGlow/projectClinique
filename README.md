@@ -20,26 +20,34 @@ The frontend of HealthHub is built using React, a popular JavaScript library for
 
 The backend and frontend communicate with each other through RESTful APIs, providing a decoupled architecture that allows for easy maintenance and scaling.
 
+## API Reference
+#### /api/auth
+* `POST /login` : Authenticates a user and returns a JWT token.
+* `POST /register` : Registers a new user and returns a JWT token.
+* `POST /me` : Returns the current user.
+
 ## Installation
 
 To run HealthHub on your local machine, follow these steps:
 
-1. Clone the repository:`git clone https://github.com/your_username/healthhub.git`
-2. Install dependencies:`npm install`
+1. Clone the repository: `git clone https://github.com/your_username/healthhub.git`
+2. Install dependencies: `npm install`
 3. Set environment variables:
    * `MONGODB_URI`: The MongoDB connection string.
    * `SECRET_KEY`: The secret key for JWT authentication.
-4. Start the server:`npm start`
-5. Start the frontend:`cd client && npm start`
+4. Add X.509 certificates to the `certs` folder:
+   * `devCA.pem`: MongoDB certificate authority.
+5. Start the server: `npm start`
+6. Start the frontend: `cd client && npm start`
 
 ## Contributing
 
 HealthHub is an open-source project, and contributions are welcome! To contribute, follow these steps:
 
 1. Fork the repository.
-2. Create a new branch:`git checkout -b my-new-feature`
-3. Make changes and commit them:`git commit -m "Add new feature"`
-4. Push to the branch:`git push origin my-new-feature`
+2. Create a new branch: `git checkout -b my-new-feature`
+3. Make changes and commit them: `git commit -m "Add new feature"`
+4. Push to the branch: `git push origin my-new-feature`
 5. Submit a pull request.
 
 ## License
