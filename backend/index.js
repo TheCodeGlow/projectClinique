@@ -26,6 +26,14 @@ const authRoutes = require('./src/routes/auth');
 // Use API routes
 app.use('/api/auth', authRoutes);
 
+// log all requests
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path}`);
+  next();
+});
+
+
+
 // Start server
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
