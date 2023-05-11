@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const HealthData = require('../models/HealthData');
+const HealthData = require('../models/Health');
 const passportJwt = require('../config/passport');
 
 // GET /patients/{id}/health-data
