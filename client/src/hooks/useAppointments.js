@@ -1,26 +1,97 @@
-import { useQuery, useMutation } from 'react-query';
-import { fetchAppointments, addAppointment } from '../api';
+import { useQuery, useMutation, useQueryClient } from "react-query";
 
-function useAppointments(id) {
-    const { isLoading, error, data } = useQuery(['appointments', id], () => fetchAppointments(id));
+const API_URL = "http://localhost:5000";
+// Define a custom hook that fetches the list of available appointment slots
+const useAppointments = () => {
+    // Use the useQuery hook to make a GET request to /appointments
+    const { data, error, isLoading, isError } = useQuery("appointments", () =>
+        fetch(API_URL+"/api/appointments").then((res) => res.json())
+    );
 
-    const addAppointmentMutation = useMutation(addAppointment);
+    // Return the data, error, isLoading and isError values from the useQuery hook
+    return { data, error, isLoading, isError };
+};
 
-    const addAppointmentHandler = async (data) => {
-        try {
-            await addAppointmentMutation.mutateAsync(data);
-        } catch (err) {
-            console.log(err);
+// Define a custom hook that creates a new appointment
+const useCreateAppointment = () => {
+    // Get the query client instance from the useQueryClient hook
+    const queryClient = useQueryClient();
+
+    // Use the useMutation hook to make a POST request to /appointments
+    const { mutate, isLoading, error, isSuccess } = useMutation(
+        (newAppointment) =>
+            fetch(API_URL+"/api/appointments", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(newAppointment),
+            }).then((res) => res.json()),
+        {
+            // On success, invalidate the appointments query to refetch the updated list
+            onSuccess: () => {
+                queryClient.invalidateQueries("appointments");
+            },
         }
-    };
+    );
 
-    return {
-        appointments: data,
-        isLoading,
-        error,
-        addAppointmentHandler,
-    };
-}
+    // Return the mutate function and the isLoading, error and isSuccess values from the useMutation hook
+    return { mutate, isLoading, error, isSuccess };
+};
 
+// Define a custom hook that updates an existing appointment by its ID
+const useUpdateAppointment = () => {
+    // Get the query client instance from the useQueryClient hook
+    const queryClient = useQueryClient();
 
-export default useAppointments;
+    // Use the useMutation hook to make a PUT request to /appointments/{id}
+    const { mutate, isLoading, error, isSuccess } = useMutation(
+        (updatedAppointment) =>
+            fetch(API_URL+`/api/appointments/${updatedAppointment.id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(updatedAppointment),
+            }).then((res) => res.json()),
+        {
+            // On success, invalidate the appointments query to refetch the updated list
+            onSuccess: () => {
+                queryClient.invalidateQueries("appointments");
+            },
+        }
+    );
+
+    // Return the mutate function and the isLoading, error and isSuccess values from the useMutation hook
+    return { mutate, isLoading, error, isSuccess };
+};
+
+// Define a custom hook that cancels an existing appointment by its ID
+const useCancelAppointment = () => {
+    // Get the query client instance from the useQueryClient hook
+    const queryClient = useQueryClient();
+
+    // Use the useMutation hook to make a DELETE request to /appointments/{id}
+    const { mutate, isLoading, error, isSuccess } = useMutation(
+        (id) =>
+            fetch(API_URL+`/api/appointments/${id}`, {
+                method: "DELETE",
+            }),
+        {
+            // On success, invalidate the appointments query to refetch the updated list
+            onSuccess: () => {
+                queryClient.invalidateQueries("appointments");
+            },
+        }
+    );
+
+    // Return the mutate function and the isLoading, error and isSuccess values from the useMutation hook
+    return { mutate, isLoading, error, isSuccess };
+};
+
+export {
+    useAppointments,
+    useCreateAppointment,
+    useUpdateAppointment,
+    useCancelAppointment
+};
