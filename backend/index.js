@@ -22,9 +22,28 @@ app.use(compression());
 
 // Define API routes
 const authRoutes = require('./src/routes/auth');
+const appointmentRoutes = require('./src/routes/appointment');
+const consultationRoutes = require('./src/routes/consultation');
+const doctorRoutes = require('./src/routes/doctor');
+const feedbackRoutes = require('./src/routes/feedback');
+const healthRoutes = require('./src/routes/health');
+const patientRoutes = require('./src/routes/patient');
+const prescriptionRoutes = require('./src/routes/prescription');
+const recordRoutes = require('./src/routes/record');
+const reminderRoutes = require('./src/routes/reminder');
+
 
 // Use API routes
 app.use('/api/auth', authRoutes);
+app.use('/api/appointments', appointmentRoutes);
+app.use('/api/consultations', consultationRoutes);
+app.use('/api/doctor', doctorRoutes);
+app.use('/api/feedback', feedbackRoutes);
+app.use('/api/health', healthRoutes);
+app.use('/api/patient', patientRoutes);
+app.use('/api/prescriptions', prescriptionRoutes);
+app.use('/api/records', recordRoutes);
+app.use('/api/reminders', reminderRoutes);
 
 // log all requests
 app.use((req, res, next) => {

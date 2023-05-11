@@ -25,6 +25,7 @@ The backend and frontend communicate with each other through RESTful APIs, provi
 * `POST /login` : Authenticates a user and returns a JWT token.
 * `POST /register` : Registers a new user and returns a JWT token.
 * `POST /me` : Returns the current user.
+ You can find the API documentation [here](https://github.com/TheCodeGlow/projectClinique/tree/main/backend).
 
 ## Installation
 
