@@ -1,0 +1,199 @@
+{
+	"info": {
+		"name": "Healthcare API",
+		"_postman_id": "70e8a26f-9d13-4ec9-a5fc-c8a89ba75a77",
+		"description": "API documentation for healthcare application"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"user1@example.com\",\"password\":\"password\"}"
+						},
+						"description": "Authenticates a user and returns a JWT token."
+					},
+					"response": []
+				},
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"user1@example.com\",\"password\":\"password\",\"firstName\":\"John\",\"lastName\":\"Doe\"}"
+							},
+						"description": "Registers a new user and returns a JWT token."
+					},
+					"response": []
+				},
+				{
+					"name": "Me",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"me"
+							]
+						},
+						"description": "Returns the current user."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+            "name": "Appointment Scheduling API",
+            "item": [
+                {
+                    "name": "Get Appointments",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwtToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/appointments",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "appointments"
+                            ]
+                        },
+                        "description": "Retrieves a list of available appointment slots."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Appointment",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwtToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/appointments",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "appointments"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"date\":\"2023-06-01\",\"time\":\"10:00 AM\",\"duration\":\"1 hour\",\"clientName\":\"John Doe\"}"
+                        },
+                        "description": "Reserves a new appointment."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Appointment",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwtToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/appointments/1234",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "appointments",
+                                "1234"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"date\":\"2023-06-01\",\"time\":\"2:00 PM\",\"duration\":\"2 hours\",\"clientName\":\"Jane Doe\"}"
+                        },
+                        "description": "Updates an existing appointment by its ID."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Cancel Appointment",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwtToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/appointments/1234",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "appointments",
+                                "1234"
+                            ]
+                        },
+                        "description": "Cancels an existing appointment by its ID."
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ]
+}

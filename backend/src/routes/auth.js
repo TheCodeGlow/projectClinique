@@ -7,10 +7,10 @@ const passportJwt = require('../config/passport');
 
 router.post('/register', async (req, res, next) => {
     try {
-        const { firstName, lastName, email, password } = req.body;
+        const { email, password } = req.body;
 
         // Check if all fields are provided
-        if (!firstName || !lastName || !email || !password) {
+        if (!email || !password) {
             return res.status(400).json({ error: 'All fields are required' });
         }
 
@@ -24,7 +24,7 @@ router.post('/register', async (req, res, next) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Create a new Account
-        const account = new Account({ firstName, lastName, email, password: hashedPassword });
+        const account = new Account({ email, password: hashedPassword, isDoctor: false });
         await account.save();
 
         // Generate JWT token and send it back to the client
@@ -37,32 +37,27 @@ router.post('/register', async (req, res, next) => {
 });
 
 router.post('/login', async (req, res, next) => {
-    passportJwt(req, res, async (err) => {
-        if (err) {
-            return next(err);
+    try {
+        const { email, password } = req.body;
+
+        // Check if account exists
+        const account = await Account.findOne({ email });
+        if (!account) {
+            return res.status(401).json({ error: 'Invalid credentials' });
         }
-        try {
-            const { email, password } = req.body;
 
-            // Check if account exists
-            const account = await Account.findOne({ email });
-            if (!account) {
-                return res.status(401).json({ error: 'Invalid credentials' });
-            }
-
-            // Check if password is correct
-            const isPasswordCorrect = await bcrypt.compare(password, account.password);
-            if (!isPasswordCorrect) {
-                return res.status(401).json({ error: 'Invalid credentials' });
-            }
-
-            // Generate JWT token and send it back to the client
-            const token = jwt.sign({ sub: account._id }, process.env.JWT_SECRET);
-            res.status(200).json({ token });
-        } catch (err) {
-            next(err);
+        // Check if password is correct
+        const isPasswordCorrect = await bcrypt.compare(password, account.password);
+        if (!isPasswordCorrect) {
+            return res.status(401).json({ error: 'Invalid credentials' });
         }
-    });
+
+        // Generate JWT token and send it back to the client
+        const token = jwt.sign({ sub: account._id }, process.env.JWT_SECRET);
+        res.status(200).json({ token });
+    } catch (err) {
+        next(err);
+    }
 });
 
 router.get('/me', passportJwt, (req, res) => {
