@@ -1,19 +1,24 @@
-import React, { useContext } from "react";
-import { UserContext } from "../contexts/UserContext";
+import React from "react";
+
+//Hooks
 import { useDoctors } from "../hooks/useDoctors";
-import usePatientRecords from "../hooks/usePatientRecords";
-import useRemoteConsultation from "../hooks/useRemoteConsultation";
+import { usePatientRecords } from "../hooks/usePatientRecords";
+import { useRemoteConsultation } from "../hooks/useRemoteConsultation";
 import usePrescriptions from "../hooks/usePrescriptions";
+
+//Components
 import DoctorList from "../components/DoctorList";
 import PatientRecordsList from "../components/PatientRecordsList";
 import RemoteConsultationsList from "../components/RemoteConsultationsList";
 import PrescriptionList from "../components/PrescriptionList";
 import AppointmentScheduler from "../components/AppointmentScheduler";
 
+//Auth
+import { user } from "../hooks/useAuth";
+
 
 function Home() {
-    const { user } = useContext(UserContext);
-
+   
     // Fetch doctors data using custom hook
     const { data: doctorsData, isLoading: isDoctorsLoading } = useDoctors();
 
@@ -35,7 +40,7 @@ function Home() {
         <div className="home-container">
             {user ? (
                 <>
-                    {user.role === "patient" && (
+                    {!user.isDoctor && (
                         <>
                             <h2>Doctors</h2>
                             {isDoctorsLoading ? (
@@ -61,7 +66,7 @@ function Home() {
 
                         </>
                     )}
-                    {user.role === "doctor" && (
+                    {user.isDoctor === "doctor" && (
                         <>
                             <h2>Appointments</h2>
                             <AppointmentScheduler />
