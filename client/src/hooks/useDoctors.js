@@ -1,24 +1,26 @@
 import { useQuery, useMutation, useQueryClient } from "react-query";
-import axios from "axios";
+import axios from "../middleware/axiosInstance";
+import { useEffect } from "react";
 
 const API_URL = "http://localhost:5000";
 
 // Define a custom hook that fetches the list of doctors
 const useDoctors = () => {
-    // Use the useQuery hook to fetch the data from the /doctors endpoint
+    //dont use useQuery hook here
     const { data, error, isLoading, isError } = useQuery("doctors", () =>
-        axios.get(API_URL+"/api/doctors").then((res) => res.data)
+        fetch(API_URL + "/api/doctors").then((res) => res.json())
     );
-
+    let doctors = data?.doctors;
     // Return the data, error and loading state
-    return { data, error, isLoading, isError };
+    return { doctors , error, isLoading, isError };
+
 };
 
 // Define a custom hook that fetches a specific doctor by their ID
 const useDoctor = (id) => {
     // Use the useQuery hook to fetch the data from the /doctors/{id} endpoint
     const { data, error, isLoading, isError } = useQuery(["doctor", id], () =>
-        axios.get(API_URL+`/api/doctors/${id}`).then((res) => res.data)
+        axios.get(API_URL + `/api/doctors/${id}`).then((res) => res.data)
     );
 
     // Return the data, error and loading state
@@ -32,7 +34,7 @@ const useCreateDoctor = () => {
 
     // Use the useMutation hook to perform the POST request to the /doctors endpoint
     const { mutate, isLoading, isError, error } = useMutation(
-        (newDoctor) => axios.post(API_URL+"/api/doctors", newDoctor).then((res) => res.data),
+        (newDoctor) => axios.post(API_URL + "/api/doctors", newDoctor).then((res) => res.data),
         {
             // On success, invalidate the doctors query to refetch the updated list
             onSuccess: () => {
@@ -53,7 +55,7 @@ const useUpdateDoctor = (id) => {
     // Use the useMutation hook to perform the PUT request to the /doctors/{id} endpoint
     const { mutate, isLoading, isError, error } = useMutation(
         (updatedDoctor) =>
-            axios.put(API_URL+`/api/doctors/${id}`, updatedDoctor).then((res) => res.data),
+            axios.put(API_URL + `/api/doctors/${id}`, updatedDoctor).then((res) => res.data),
         {
             // On success, invalidate the doctor query to refetch the updated data
             onSuccess: () => {
