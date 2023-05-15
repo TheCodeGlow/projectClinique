@@ -3,10 +3,21 @@ const router = express.Router();
 const Patient = require('../models/Patient');
 const passportJwt = require('../config/passport');
 
-// Get list of patients
+// TODO: Do the same for patients
+// Get list of patients for a specific doctor
 router.get('/patients', passportJwt, async (req, res, next) => {
     try {
-        const patients = await Patient.find();
+        const doctorId = req.query.doctorId;
+        let patients = [];
+
+        if (doctorId) {
+            const appointments = await Appointment.find({ doctor: doctorId });
+            patients = await Patient.find({ _id: { $in: appointments.map(appointment => appointment.patient) } });
+        } else {
+            // if no doctorId is provided, return all patients
+            patients = await Patient.find();
+        }
+
         res.json(patients);
     } catch (err) {
         next(err);
