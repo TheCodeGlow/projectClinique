@@ -4,7 +4,7 @@ import useAuth from '../../hooks/useAuth';
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { login, error } = useAuth();
+    const { login, isLoginLoading, loginError, isLoginSuccess } = useAuth();
 
     const handleEmailChange = (event) => {
         setEmail(event.target.value);
@@ -18,8 +18,10 @@ function Login() {
         event.preventDefault();
         // Handle form submission logic here
         login({ email: email, password: password });
-        console.log(email + password );
-        console.log(error);
+        if(isLoginSuccess){
+            //return to homepage
+
+        }
     };
 
     return (
@@ -34,6 +36,8 @@ function Login() {
                     <input type="password" id="password" value={password} onChange={handlePasswordChange} required />
 
                     <button type="submit">Login</button>
+                    {loginError && <div className="error">{loginError.message}</div>}
+                    {isLoginLoading && <div className="loader">Loading...</div>}
                 </form>
             </div>
         </div>

@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "react-query";
-import axios from "axios";
+import axios from "../middleware/axiosInstance";
 
 const API_URL = "http://localhost:5000";
 

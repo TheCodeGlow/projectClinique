@@ -19,13 +19,16 @@ function Navbar() {
               <Link to="/register">Registration</Link>
             </li>
           </>
-        ) : user.role === "patient" ? (
+        ) : !user.isDoctor ? (
           <>
             <li>
               <Link to="/">Home</Link>
             </li>
             <li>
               <Link to="/dashboard">Patient Dashboard</Link>
+            </li>
+            <li>
+              <Link to="/doctor">Doctor</Link>
             </li>
             <li>
               <Link to="/patient-record">My Records</Link>
@@ -39,13 +42,16 @@ function Navbar() {
               </Link>
             </li>
           </>
-        ) : user.role === "doctor" ? (
+        ) : user.isDoctor ? (
           <>
             <li>
               <Link to="/">Home</Link>
             </li>
             <li>
               <Link to="/dashboard">Dashboard</Link>
+            </li>
+            <li>
+              <Link to="/doctor">Doctor</Link>
             </li>
             <li>
               <Link to="/patients">Patients</Link>

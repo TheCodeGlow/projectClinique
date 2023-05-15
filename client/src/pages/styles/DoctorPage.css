@@ -1,0 +1,89 @@
+/* DoctorPage.css */
+
+.wrapper {
+    display: flex;
+    flex-direction: row;
+    /* change to row */
+    align-items: center;
+    height: 100vh;
+    /* change to 100vh */
+}
+
+.filter {
+    display: flex;
+    flex-direction: column;
+    /* change to column */
+    justify-content: space-between;
+    width: 20%;
+    /* change to 20% */
+    height: 80%;
+    /* change to 80% */
+    margin: 20px;
+}
+
+.filter-item {
+    display: flex;
+    flex-direction: column;
+    
+    margin: 10px;
+    /* reduce the margin */
+}
+
+.filter-item label {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.filter input {
+    width: 80%;
+    height: 60px;
+    /* reduce the height */
+    border-radius: 5px;
+    /* reduce the border radius */
+    border: 1px solid #ccc;
+    /* add a border */
+    padding: 5px;
+    /* reduce the padding */
+    font-size: 16px;
+    /* reduce the font size */
+}
+
+.doctors {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 20px;
+    width: 80%;
+    /* change to 80% */
+    height: 80%;
+    /* change to 80% */
+    margin: 20px;
+    /* add margin */
+    overflow-y: scroll;
+    /* add scroll */
+}
+
+.doctor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.doctor .Name {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.doctor .specialty {
+    font-size: 18px;
+    font-style: italic;
+    color: #777;
+}
