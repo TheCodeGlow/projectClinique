@@ -6,6 +6,10 @@ import "../styles.css";
 
 function Navbar() {
   const { user, logout } = useAuth();
+  const handleLogout = () => {
+    logout();
+    window.location.reload(); // Refresh the page after logout
+  };
 
   return (
     <nav className="navbar">
@@ -37,7 +41,7 @@ function Navbar() {
               <Link to="/book-appointment">Book Appointment</Link>
             </li>
             <li>
-              <Link to="/" onClick={logout}>
+              <Link to="/" onClick={handleLogout}>
                 Logout
               </Link>
             </li>
