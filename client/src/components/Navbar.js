@@ -6,6 +6,8 @@ import "../styles.css";
 
 function Navbar() {
   const { user, logout } = useAuth();
+ 
+
 
   return (
     <nav className="navbar">
