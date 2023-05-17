@@ -10,9 +10,6 @@ const DoctorPage = () => {
     const { doctors, error: doctorsError, isLoading: doctorsLoading } = useDoctors();
     const filteredDoctors = useDoctorFilters(doctors, nameFilter, specialtyFilter);
 
-    console.log("doctors: " + doctors)
-    console.log("filteredDoctors: " + filteredDoctors)
-
     const handleNameFilterChange = (event) => {
         setNameFilter(event.target.value);
     };
@@ -27,10 +24,13 @@ const DoctorPage = () => {
         )
     }
 
+    console.log("doctors: " + doctors)
+    console.log("filteredDoctors: " + filteredDoctors)
+
+
 
     return (
         <div className="wrapper"> 
-
             <div className="filter">
                 <div className="filter-item"> 
                     <label htmlFor="name-filter">Name</label> 

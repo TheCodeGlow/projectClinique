@@ -10,7 +10,7 @@ const useDoctors = () => {
     const { data, error, isLoading, isError } = useQuery("doctors", () =>
         fetch(API_URL + "/api/doctors").then((res) => res.json())
     );
-    let doctors = data?.doctors;
+    let doctors = data;
     // Return the data, error and loading state
     return { doctors , error, isLoading, isError };
 

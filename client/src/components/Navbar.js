@@ -6,6 +6,11 @@ import "../styles.css";
 
 function Navbar() {
   const { user, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    window.location.href("/");
+  };
  
 
 
