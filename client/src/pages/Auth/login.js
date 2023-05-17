@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import useAuth from '../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { login, isLoginLoading, loginError, isLoginSuccess } = useAuth();
+    let navigate = useNavigate();
 
     const handleEmailChange = (event) => {
         setEmail(event.target.value);
@@ -14,15 +16,17 @@ function Login() {
         setPassword(event.target.value);
     };
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = (event) => {
         event.preventDefault();
-        // Handle form submission logic here
         login({ email: email, password: password });
-        if(isLoginSuccess){
-            //return to homepage
-
-        }
     };
+
+    useEffect(() => {
+        if (isLoginSuccess) {
+          navigate('/');
+        }
+      }, [isLoginSuccess, navigate]);
+    
 
     return (
         <div className="container">
@@ -37,7 +41,7 @@ function Login() {
 
                     <button type="submit">Login</button>
                     {loginError && <div className="error">{loginError.message}</div>}
-                    {isLoginLoading && <div className="loader">Loading...</div>}
+                    {isLoginLoading && <div className='loaderContainer'><div className="loader" /><label id='loaderText'>Loading...</label></div>}
                 </form>
             </div>
         </div>

@@ -5,24 +5,36 @@ import { useState, useEffect } from "react";
 const API_URL = "http://localhost:5000";
 
 const useGetCurrentUser = (token) => {
-  const { data, error, isLoading, refetch } = useQuery("currentUser", () =>
-    axios
-      .get(API_URL + "/api/auth/me", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => res.data)
-  );
+  const { data, error, isLoading, refetch } = useQuery("currentUser", () => {
+    if (token) { // Check if token exists
+      return axios
+        .get(API_URL + "/api/auth/me", {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        })
+        .then((res) => res.data);
+    } else {
+      return Promise.resolve(null); // Return a resolved promise with null if token is not available
+    }
+  });
 
   return { user: data, error, isLoading, refetch };
 };
-
 const useAuth = () => {
   const [token, setToken] = useState(localStorage.getItem("token"));
+  const [loading, setLoading] = useState(true);
 
   const handleSetToken = (newToken) => {
     localStorage.setItem("token", newToken);
     setToken(newToken);
   };
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      setToken(storedToken);
+    }
+    setLoading(false);
+  }, []);
 
   const { user, error, isLoading, refetch } = useGetCurrentUser(token);
 
@@ -63,8 +75,12 @@ const useAuth = () => {
 
   useEffect(() => {
     if (refetchUser) {
-      refetch();
+      refetch().then(() => {
+        setLoading(false);
+      });
       setRefetchUser(false);
+    } else {
+      setLoading(false);
     }
   }, [refetchUser, refetch]);
 
@@ -75,6 +91,8 @@ const useAuth = () => {
 
   return {
     user,
+    error,
+    isLoading: isLoading || loading, // Include isLoading from useGetCurrentUser
     login,
     loginData,
     loginError,

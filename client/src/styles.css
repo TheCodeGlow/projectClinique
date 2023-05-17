@@ -284,3 +284,14 @@ body {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
+
+  .loaderContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #loaderText{
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+  }

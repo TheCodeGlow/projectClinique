@@ -39,7 +39,7 @@ function Navbar() {
               <Link to="/book-appointment">Book Appointment</Link>
             </li>
             <li>
-              <Link to="/" onClick={logout}>
+              <Link to="/" onClick={handleLogout}>
                 Logout
               </Link>
             </li>
