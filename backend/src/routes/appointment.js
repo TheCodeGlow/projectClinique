@@ -3,91 +3,74 @@ const router = express.Router();
 const Appointment = require('../models/Appointment');
 const passportJwt = require('../config/passport');
 
-// Retrieves a list of available appointment slots
-router.get('/appointments', passportJwt, async (req, res, next) => {
-    try {
-        const appointments = await Appointment.find({ isReserved: false });
-        res.json(appointments);
-    } catch (err) {
-        next(err);
-    }
+// GET /appointments
+router.get('/', passportJwt, async (req, res, next) => {
+  try {
+    const appointments = await Appointment.find({});
+    res.json(appointments);
+  } catch (err) {
+    next(err);
+  }
 });
 
-// Reserves a new appointment
-router.post('/appointments', passportJwt, async (req, res, next) => {
-    try {
-        const { date, time } = req.body;
+// POST /appointments
+router.post('/', passportJwt, async (req, res, next) => {
+  try {
+    const { doctor, patient, date, details } = req.body;
 
-        // Check if appointment slot is available
-        const existingAppointment = await Appointment.findOne({ date, time, isReserved: false });
-        if (!existingAppointment) {
-            return res.status(409).json({ error: 'Appointment slot is not available' });
-        }
-
-        // Reserve the appointment slot
-        existingAppointment.isReserved = true;
-        existingAppointment.patient = req.user._id;
-        await existingAppointment.save();
-
-        res.status(201).json({ message: 'Appointment reserved successfully' });
-    } catch (err) {
-        next(err);
+    // Check if all fields are provided
+    if (!doctor || !patient || !date || !details) {
+      return res.status(400).json({ error: 'All fields are required' });
     }
+
+    // Create a new Appointment
+    const appointment = new Appointment({ doctor, patient, date, details });
+    await appointment.save();
+
+    res.status(201).json(appointment);
+  } catch (err) {
+    next(err);
+  }
 });
 
-// Updates an existing appointment by its ID
-router.put('/appointments/:id', passportJwt, async (req, res, next) => {
-    try {
-        const { id } = req.params;
-        const { date, time } = req.body;
+// PUT /appointments/:id
+router.put('/:id', passportJwt, async (req, res, next) => {
+  try {
+    const { doctor, patient, date, details } = req.body;
 
-        // Check if appointment slot exists
-        const existingAppointment = await Appointment.findById(id);
-        if (!existingAppointment) {
-            return res.status(404).json({ error: 'Appointment not found' });
-        }
-
-        // Check if appointment slot is already reserved
-        if (existingAppointment.isReserved) {
-            return res.status(409).json({ error: 'Appointment slot is already reserved' });
-        }
-
-        // Update the appointment slot
-        existingAppointment.date = date;
-        existingAppointment.time = time;
-        await existingAppointment.save();
-
-        res.json({ message: 'Appointment updated successfully' });
-    } catch (err) {
-        next(err);
+    // Find the appointment by ID
+    const appointment = await Appointment.findById(req.params.id);
+    if (!appointment) {
+      return res.status(404).json({ error: 'Appointment not found' });
     }
+
+    // Update the appointment fields
+    appointment.doctor = doctor || appointment.doctor;
+    appointment.patient = patient || appointment.patient;
+    appointment.date = date || appointment.date;
+    appointment.details = details || appointment.details;
+
+    await appointment.save();
+
+    res.json(appointment);
+  } catch (err) {
+    next(err);
+  }
 });
 
-// Cancels an existing appointment by its ID
-router.delete('/appointments/:id', passportJwt, async (req, res, next) => {
-    try {
-        const { id } = req.params;
-
-        // Check if appointment slot exists
-        const existingAppointment = await Appointment.findById(id);
-        if (!existingAppointment) {
-            return res.status(404).json({ error: 'Appointment not found' });
-        }
-
-        // Check if appointment slot is already cancelled
-        if (!existingAppointment.isReserved) {
-            return res.status(409).json({ error: 'Appointment slot is already cancelled' });
-        }
-
-        // Cancel the appointment slot
-        existingAppointment.isReserved = false;
-        existingAppointment.patient = null;
-        await existingAppointment.save();
-
-        res.json({ message: 'Appointment cancelled successfully' });
-    } catch (err) {
-        next(err);
+// DELETE /appointments/:id
+router.delete('/:id', passportJwt, async (req, res, next) => {
+  try {
+    // Find the appointment by ID and delete it
+    const appointment = await Appointment.findByIdAndDelete(req.params.id);
+    if (!appointment) {
+      return res.status(404).json({ error: 'Appointment not found' });
     }
+
+    res.json(appointment);
+  } catch (err) {
+    next(err);
+  }
 });
 
 module.exports = router;
