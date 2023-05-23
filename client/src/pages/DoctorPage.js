@@ -10,9 +10,6 @@ const DoctorPage = () => {
     const { doctors, error: doctorsError, isLoading: doctorsLoading } = useDoctors();
     const filteredDoctors = useDoctorFilters(doctors, nameFilter, specialtyFilter);
 
-    console.log("doctors: " + doctors)
-    console.log("filteredDoctors: " + filteredDoctors)
-
     const handleNameFilterChange = (event) => {
         setNameFilter(event.target.value);
     };
@@ -27,13 +24,16 @@ const DoctorPage = () => {
         )
     }
 
+    console.log("doctors: " + doctors)
+    console.log("filteredDoctors: " + filteredDoctors)
+
+
 
     return (
-        <div className="wrapper"> 
-
+        <div className="wrapper">
             <div className="filter">
-                <div className="filter-item"> 
-                    <label htmlFor="name-filter">Name</label> 
+                <div className="filter-item">
+                    <label htmlFor="name-filter">Name</label>
                     <input
                         id="name-filter"
                         type="text"
@@ -43,9 +43,9 @@ const DoctorPage = () => {
                     />
                 </div>
                 <div className="filter-item">
-                    <label htmlFor="specialty-filter">Specialty</label> 
+                    <label htmlFor="specialty-filter">Specialty</label>
                     <input
-                        id="specialty-filter" 
+                        id="specialty-filter"
                         type="text"
                         placeholder="Search by Specialty"
                         value={specialtyFilter}
@@ -54,7 +54,7 @@ const DoctorPage = () => {
                 </div>
             </div>
 
-            <div className="doctors"> 
+            <div className="doctors">
                 {(filteredDoctors && filteredDoctors.map((doctor) => (
                     <div className="doctor" key={doctor._id}>
                         <h3 className="Name"> {`${doctor.firstName} ${doctor.lastName}`}</h3>

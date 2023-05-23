@@ -1,9 +1,9 @@
 import React from "react";
 
-import { useDoctors } from "../hooks/useDoctors";
-import { useAppointments} from "../hooks/useAppointments"
-import { usePatients } from "../hooks/usePatients"
-import useAuth from "../hooks/useAuth";
+import { useDoctors } from "../../hooks/useDoctors";
+import { useAppointments} from "../../hooks/useAppointments"
+import { usePatients } from "../../hooks/usePatients"
+import useAuth from "../../hooks/useAuth";
 
 
 function Dashboard(){

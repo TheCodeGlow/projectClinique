@@ -1,0 +1,114 @@
+
+├───backend
+│   │   .env
+│   │   .gitignore
+│   │   index.js
+│   │   package-lock.json
+│   │   package.json
+│   │   postman.json
+│   │   README.md
+│   │
+│   └───src
+│       ├───certs
+│       │       devCA.pem
+│       │
+│       ├───config
+│       │       db.js
+│       │       passport.js
+│       │
+│       ├───models
+│       │       Account.js
+│       │       Appointment.js
+│       │       Consultation.js
+│       │       Doctor.js
+│       │       Feedback.js
+│       │       Health.js
+│       │       MedicalRecord.js
+│       │       Patient.js
+│       │       Prescription.js
+│       │       Reminder.js
+│       │
+│       └───routes
+│               appointment.js
+│               auth.js
+│               consultation.js
+│               doctor.js
+│               feedback.js
+│               health.js
+│               patient.js
+│               prescription.js
+│               record.js
+│               reminder.js
+│
+└───client
+    │   .gitignore
+    │   package-lock.json
+    │   package.json
+    │   README.md
+    │
+    ├───public
+    │       favicon.ico
+    │       index.html
+    │       logo192.png
+    │       logo512.png
+    │       manifest.json
+    │       robots.txt
+    │
+    └───src
+        │   App.js
+        │   index.css
+        │   index.js
+        │   logo.svg
+        │   reportWebVitals.js
+        │   setupTests.js
+        │   styles.css
+        │   utils.js
+        │
+        ├───components
+        │   │   AppointmentScheduler.js
+        │   │   Dashboard.js
+        │   │   DoctorList.js
+        │   │   Navbar.js
+        │   │   PatientRecordsList.js
+        │   │   PrescriptionList.js
+        │   │   RemoteConsultationsList.js
+        │   │
+        │   └───dashboard
+        │           AppointmentRow.js
+        │           Calendar.js
+        │           NotificationBadge.js
+        │           Schedule.js
+        │           StatCard.js
+        │
+        ├───hooks
+        │       useAppointments.js
+        │       useAuth.js
+        │       useDoctors.js
+        │       useDoctorsFilter.js
+        │       useFeedback.js
+        │       useHealth.js
+        │       usePatientRecords.js
+        │       usePatients.js
+        │       usePrescriptions.js
+        │       useRemoteConsultation.js
+        │
+        ├───middleware
+        │       axiosInstance.js
+        │
+        └───pages
+            │   DoctorPage.js
+            │   Home.js
+            │   NotFound.js
+            │   PatientRecord.js
+            │
+            ├───Auth
+            │       login.js
+            │       register.js
+            │
+            ├───Dashboard
+            │       DoctorDashboard.js
+            │       PatientDashboard.js
+            │
+            └───styles
+                    Dashboard.css
+                    DoctorPage.css

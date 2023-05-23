@@ -1,6 +1,6 @@
 import React from "react";
-import useAuth from "../hooks/useAuth";
-import Dashboard from "../components/Dashboard";
+import useAuth from "../../hooks/useAuth";
+import Dashboard from "../../components/home/Dashboard";
 
 
 

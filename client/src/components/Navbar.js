@@ -6,6 +6,11 @@ import "../styles.css";
 
 function Navbar() {
   const { user, logout } = useAuth();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/";
+  };
  
 
 

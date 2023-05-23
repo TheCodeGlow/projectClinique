@@ -7,8 +7,36 @@ import Calendar from '../../components/dashboard/Calendar';
 import Schedule from '../../components/dashboard/Schedule';
 import "../styles/Dashboard.css"
 const DashboardPage = () => {
-    const [selectedDay, setSelectedDay] = useState(["MON"]);
-    console.log("selectedDay ", selectedDay);
+    const [selectedDay, setSelectedDay] = useState(["Mon"]);
+    const [date, setDate] = useState(new Date().toISOString());
+
+
+    //get the selectedDay and the two days after it
+    const days = (selectedDay) => {
+        const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+        const index = daysOfWeek.indexOf(selectedDay);
+        const days = [];
+        //check if the selectedDay is the last day of the week
+        if (index === 6) {
+            days.push(daysOfWeek[index]);
+            days.push(daysOfWeek[0]);
+            days.push(daysOfWeek[1]);
+            return days;
+        }
+        //check if the selectedDay is the second last day of the week
+        if (index === 5) {
+            days.push(daysOfWeek[index]);
+            days.push(daysOfWeek[6]);
+            days.push(daysOfWeek[0]);
+            return days;
+        }
+        for (let i = 0; i < 3; i++) {
+            days.push(daysOfWeek[index + i]);
+        }
+        return days;
+    };
+
+
     const stats = [
         { title: 'Patients', value: '120', icon: '👥' },
         { title: 'Reports', value: '80', icon: '📄' },
@@ -16,11 +44,32 @@ const DashboardPage = () => {
         { title: 'Experience', value: '5 years', icon: '🎓' },
     ];
 
+
     const events = [
-        { title: 'Morning rounds', time: '8:00 AM - 10:00 AM', location: 'Ward A', days: ['Mon'] },
-        { title: 'Surgery', time: '10:30 AM - 12:30 PM', location: 'Operating room 1', days: ['Tue'] },
-        { title: 'Lunch break', time: '1:00 PM - 2:00 PM', location: 'Cafeteria', days: ['Sat'] },
-        { title: '  Online consultation', time: '2:30 PM - 4:00 PM', location: 'Zoom', days: ['Fri'] },
+        {
+            title: 'Follow-up checkup',
+            location: 'Location 1',
+            time: '6:00 AM - 7:00 AM',
+            day: ['Mon'],
+            startDate: new Date('2023-05-08T23:00:00'), // use startDate instead of start
+            endDate: new Date('2023-05-09T23:00:00'), // use endDate instead of end
+        },
+        {
+            title: 'New patient consultation',
+            location: 'Location 2',
+            time: '7:00 AM - 8:00 AM',
+            day: ['Tue'],
+            startDate: new Date('2023-05-09T23:00:00'), // use startDate instead of start
+            endDate: new Date('2023-05-09T23:00:00'), // use endDate instead of end
+        },
+        {
+            title: 'Prescription refill',
+            location: 'Location 3',
+            time: '8:00 AM - 9:00 AM',
+            day: ['Mon'],
+            startDate: new Date('2023-05-08ST23:00:00'), // use startDate instead of start
+            endDate: new Date('2023-05-09T23:00:00'), // use endDate instead of end
+        },
     ];
 
     const appointments = [
@@ -37,10 +86,16 @@ const DashboardPage = () => {
     ];
 
     const FilteredEvents = () => {
-        return events.filter((event) => event.days.includes(selectedDay));
+        //filter the events based on the date
+        const filteredEvents = events.filter((event) => {
+            if (event.startDate.getDate() === new Date(date).getDate() &&
+                event.startDate.getMonth() === new Date(date).getMonth() &&
+                event.startDate.getFullYear() === new Date(date).getFullYear())
+                return event;
+            else return null;
+        });
+        return filteredEvents;
     };
-
-
     return (
         <div className="dashboard-page">
             <div className="left-part">
@@ -53,7 +108,7 @@ const DashboardPage = () => {
 
                 <div className="schedule-section">
                     <h4>Schedule</h4>
-                    <Schedule events={events} />
+                    <Schedule selectedDay={days(selectedDay)} events={FilteredEvents()} />
                 </div>
 
                 <div className="appointment-section">
@@ -83,7 +138,7 @@ const DashboardPage = () => {
             </div>
             <div className="right-part">
                 <div className="calendar-section">
-                    <Calendar selectedDay={selectedDay} setSelectedDay={setSelectedDay} />
+                    <Calendar selectedDay={selectedDay} setSelectedDay={setSelectedDay} setDate={setDate} />
                 </div>
                 <div className="notifications-section">
                     <div className="notification-list">
@@ -100,5 +155,6 @@ const DashboardPage = () => {
         </div>
     );
 };
+
 
 export default DashboardPage;
