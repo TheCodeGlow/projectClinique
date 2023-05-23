@@ -168,7 +168,7 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-evenly;
-    color: #fff;
+    color : #fff;
 }
 
 .doctors .selected .doctor-image img {
@@ -176,8 +176,8 @@
     outline: 2px dashed rgb(255, 255, 255);
 }
 
-.doctors .selected .doctor-status {
-    left: 90%;
+.doctors .selected .doctor-status{
+    left:90%;
     top: 80%;
     align-self: self-start;
     /* HERE */

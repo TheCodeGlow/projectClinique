@@ -8,8 +8,8 @@ function Navbar() {
   const { user, logout } = useAuth();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    window.location.href = "/";
+    logout();
+    window.location.href("/");
   };
  
 

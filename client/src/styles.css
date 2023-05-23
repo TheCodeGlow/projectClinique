@@ -295,3 +295,7 @@ body {
     margin-top: 0.5rem;
     font-size: 0.8rem;
   }
+
+  .stat-card:hover{
+    background-color: rgba(180, 180, 180, 0.801);
+  }
