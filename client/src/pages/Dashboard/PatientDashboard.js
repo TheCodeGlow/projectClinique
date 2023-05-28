@@ -38,11 +38,12 @@ const DashboardPage = () => {
 
 
     const stats = [
-        { title: 'Patients', value: '120', icon: '👥' },
-        { title: 'Reports', value: '80', icon: '📄' },
-        { title: 'Consultations', value: '60', icon: '🗣️' },
-        { title: 'Experience', value: '5 years', icon: '🎓' },
+        { title: 'Doctors', value: '2', icon: '👥' },
+        { title: 'Appointments', value: '3', icon: '📄' },
+        { title: 'Consultations', value: '7', icon: '🗣️' },
+        { title: 'Prescriptions', value: '5', icon: '💊' },
     ];
+
 
 
     const events = [

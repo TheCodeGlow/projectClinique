@@ -2,76 +2,55 @@ import React from "react";
 import { Link } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 //import css
-import "../styles.css";
+import "../pages/styles/home.css";
 
 function Navbar() {
   const { user, logout } = useAuth();
 
-  const handleLogout = () => {
-    logout();
-    window.location.href("/");
-  };
- 
+
+
+
 
 
   return (
-    <nav className="navbar">
-      <ul className="navbar-links">
-        {!user ? (
-          <>
-            <li>
-              <Link to="/login">Login</Link>
-            </li>
-            <li>
-              <Link to="/register">Registration</Link>
-            </li>
-          </>
-        ) : !user.isDoctor ? (
-          <>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/dashboard">Patient Dashboard</Link>
-            </li>
-            <li>
-              <Link to="/doctor">Doctor</Link>
-            </li>
-            <li>
-              <Link to="/patient-record">My Records</Link>
-            </li>
-            <li>
-              <Link to="/book-appointment">Book Appointment</Link>
-            </li>
-            <li>
-              <Link to="/" onClick={handleLogout}>
-                Logout
-              </Link>
-            </li>
-          </>
-        ) : user.isDoctor ? (
-          <>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/dashboard">Dashboard</Link>
-            </li>
-            <li>
-              <Link to="/doctor">Doctor</Link>
-            </li>
-            <li>
-              <Link to="/patients">Patients</Link>
-            </li>
-            <li>
-              <Link to="/" onClick={logout}>
-                Logout
-              </Link>
-            </li>
-          </>
+    <header className="header">
+      <div className="logo header__logo">
+        <div className="letterT header__logoLetterT">H</div>
+        <div className="logoName header__logoName">HealthHub</div>
+      </div>
+
+
+      {!user ? (
+        <div className="header__nav">
+          <Link to="/" className="header__navLinkHome">Home</Link>
+          <Link to="/login" className="header__navLink">Login</Link>
+          <Link to="/register" className="header__navLink">Register</Link>
+          <Link to="#" class="header__navLink">Testimonials</Link>
+          <Link to="#" class="header__navLink">About us</Link>
+        </div>
+      ) : user.isDoctor ? (
+        <div className="header__nav">
+          <Link to="/" className="header__navLinkHome">Home</Link>
+          <Link to="/dashboard" className="header__navLink">Dashboard</Link>
+          <Link to="/doctor" className="header__navLink">Find a doctor</Link>
+          <Link to="#" class="header__navLink">Testimonials</Link>
+          <Link to="#" class="header__navLink">About us</Link>
+          <Link to="/" onClick={logout} class="header__navLink">Logout</Link>
+        </div>
+      )
+        : !user.isDoctor ? (
+          <div className="header__nav">
+            <Link to="/" className="header__navLinkHome">Home</Link>
+            <Link to="/dashboard" className="header__navLink">Dashboard</Link>
+            <Link to="/doctor" className="header__navLink">Find a doctor</Link>
+            <Link to="#" class="header__navLink">Testimonials</Link>
+            <Link to="#" class="header__navLink">About us</Link>
+            <Link to="/" onClick={logout} class="header__navLink">Logout</Link>
+          </div>
         ) : null}
-      </ul>
-    </nav>
+
+
+    </header>
   );
 }
 

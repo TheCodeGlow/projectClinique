@@ -1,0 +1,177 @@
+:root {
+    --primary-color: #1877f2;
+    --secondary-color: #f3f3f3;
+    --font-family: Arial, sans-serif;
+    --font-size: 14px;
+    --font-weight: 600;
+}
+
+.login-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: calc(100vh - 100px);
+    width: 40%;
+}
+
+.login-box {
+    flex: 1 0 auto;
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    /* add this to create a new stacking context for the pseudo-element */
+}
+
+.login-box::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    border: 2px dashed var(--secondary-color);
+    border-radius: 12px;
+    z-index: -1;
+    /* move it behind the login box */
+}
+
+h2 {
+    font-family: var(--font-family);
+    font-size: 24px;
+    font-weight: var(--font-weight);
+    margin-bottom: 24px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-family: var(--font-family);
+    font-size: var(--font-size);
+    font-weight: var(--font-weight);
+    margin-bottom: 8px;
+    color: #606770;
+}
+
+
+input {
+    height: 40px;
+    padding: 8px;
+    border: 1px solid #dddfe2;
+    border-radius: 4px;
+    margin-bottom: 12px;
+    font-family: var(--font-family);
+    font-size: var(--font-size);
+    transition: border-color 0.3s ease;
+}
+
+input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.3);
+}
+
+button.login-button {
+    height: 40px;
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-family: var(--font-family);
+    font-size: 16px;
+    font-weight:
+        var(--font-weight);
+    cursor:
+        pointer;
+    pointer-events:
+        auto;
+    /* enable pointer events */
+}
+
+.login-links {
+    display:
+        flex;
+    align-items:
+        center;
+    justify-content:
+        space-between;
+    margin-top:
+        20 px;
+    font-family:
+        var(--font-family);
+    font-size:
+        var(--font-size);
+    color:
+        #606770;
+}
+
+.login-links a {
+    color:
+        #385898;
+    text-decoration:
+        none;
+    transition:
+        color 0.3 s ease;
+}
+
+.login-links a:hover {
+    color:
+        var(--primary-color);
+}
+
+.divider {
+    margin:
+        0 8 px;
+}
+
+/* loader section */
+
+.loader {
+    border:
+        4 px solid var(--secondary-color);
+    border-top:
+        4 px solid var(--primary-color);
+    border-radius:
+        50%;
+    width:
+        30 px;
+    height:
+        30 px;
+    animation:
+        spin 1 s linear infinite;
+    margin:
+        0 auto;
+}
+
+@keyframes spin {
+    0% {
+        transform:
+            rotate(0 deg);
+    }
+
+    100% {
+        transform:
+            rotate(360 deg);
+    }
+}
+
+.loaderContainer {
+    display:
+        flex;
+    flex-direction:
+        column;
+    align-items:
+        center;
+}
+
+#loaderText {
+    margin-top:
+        0.5 rem;
+    font-family:
+        var(--font-family);
+    font-size:
+        0.8 rem;
+}
