@@ -33,9 +33,9 @@ const PatientProfile = () => {
     console.log(patients);
     //set patient data
     const [patient, setPatient] = useState(null);
-    console.log("CurrentPatient: ",patient)
+    console.log("CurrentPatient: ", patient)
     const [patientAppointments, setPatientAppointments] = useState([])
-    console.log("CurrentAppointments: ",patientAppointments)
+    console.log("CurrentAppointments: ", patientAppointments)
 
     //get patient data
     useEffect(() => {
@@ -61,12 +61,13 @@ const PatientProfile = () => {
         <div className="container">
             <div className="PatientInfo">
                 {/* display patient info */}
-                {PatientLoading ? (<div>Loading...</div>) :
+                {PatientLoading ? (<div className="loading-animation" />) :
                     (<>
                         <div className="PatientImage">
                             <img
-                            src=""
-                            alt="Patient"
+                                //get image of random person
+                                src="https://media.hswstatic.com/eyJidWNrZXQiOiJjb250ZW50Lmhzd3N0YXRpYy5jb20iLCJrZXkiOiJnaWZcL3BsYXlcLzBiN2Y0ZTliLWY1OWMtNDAyNC05ZjA2LWIzZGMxMjg1MGFiNy0xOTIwLTEwODAuanBnIiwiZWRpdHMiOnsicmVzaXplIjp7IndpZHRoIjo4Mjh9LCJ0b0Zvcm1hdCI6ImF2aWYifX0="
+                                alt="Patient"
                             />
                         </div>
                         <div className="PatientName">
@@ -100,40 +101,45 @@ const PatientProfile = () => {
             <div className="PatientAppointments">
                 <h2>Appointments</h2>
                 {AppointmentsLoading ? (
-                    <div>Loading...</div>
+                    <div className="loading-animation"></div>
                 ) : (
                     <>
-                        {patientAppointments.length === 0  ? (
+                        {patientAppointments.length === 0 ? (
                             <p>No appointments found.</p>
                         ) : (
-                            <ul>
-                                {patientAppointments.map((appointment) => (
-                                    <li key={appointment._id}>
-                                        <div>
-                                            <h3>{appointment.reason}</h3>
-                                            <p>
-                                                Date:{" "}
-                                                {new Date(appointment.startTime).toLocaleDateString()}
-                                            </p>
-                                            <p>
-                                                Time:{" "}
+                            <table className="appointments-table">
+                                <thead>
+                                    <tr>
+                                        <th>Num</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {patientAppointments.map((appointment) => (
+                                        <tr key={appointment._id}>
+                                            <td>{
+                                                patientAppointments.indexOf(appointment) + 1
+                                            }</td>
+                                            <td>{new Date(appointment.startTime).toLocaleDateString()}</td>
+                                            <td>
                                                 {new Date(appointment.startTime).toLocaleTimeString([], {
                                                     hour: "2-digit",
                                                     minute: "2-digit",
                                                     hour12: true,
-                                                })}
-                                                -{" "}
+                                                })} -{" "}
                                                 {new Date(appointment.endTime).toLocaleTimeString([], {
                                                     hour: "2-digit",
                                                     minute: "2-digit",
                                                     hour12: true,
                                                 })}
-                                            </p>
-                                            <p>Details: {appointment.details}</p>
-                                        </div>
-                                    </li>
-                                ))}
-                            </ul>
+                                            </td>
+                                            <td>{appointment.details}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         )}
                     </>
                 )}

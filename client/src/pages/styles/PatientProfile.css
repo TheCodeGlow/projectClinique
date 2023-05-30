@@ -1,68 +1,104 @@
 .container {
-    max-width: 800px;
-    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    padding: 30px;
+}
+
+.PatientInfo,
+.PatientAppointments {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px;
     padding: 20px;
-  }
-  
-  .PatientInfo {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.PatientInfo {
+    flex: 1;
+}
+
+.PatientAppointments {
+    flex: 2;
+}
+
+.PatientImage img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 50%;
     margin-bottom: 20px;
-  }
-  
-  .PatientName h1 {
+}
+
+.PatientName h1 {
     font-size: 24px;
-    font-weight: bold;
     margin-bottom: 10px;
-  }
-  
-  .PatientDOB h3,
-  .PatientGender h3,
-  .PatientPhone h3,
-  .PatientAddress h3 {
+}
+
+.PatientDOB h3,
+.PatientGender h3,
+.PatientPhone h3,
+.PatientAddress h3 {
     font-size: 16px;
     margin-bottom: 5px;
-  }
-  
-  .PatientAppointments h2 {
+}
+
+.PatientAppointments h2 {
     font-size: 20px;
-    font-weight: bold;
     margin-bottom: 10px;
-  }
-  
-  .PatientAppointments p {
-    font-size: 14px;
-    margin-bottom: 5px;
-  }
-  
-  .PatientAppointments ul {
-    list-style-type: none;
-    padding: 0;
+}
+
+.PatientAppointments p {
     margin: 0;
-  }
-  
-  .PatientAppointments li {
-    margin-bottom: 10px;
-    padding: 10px;
-    background-color: #f8f8f8;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-  }
-  
-  .PatientAppointments li h3 {
-    font-size: 16px;
+}
+
+.PatientAppointments .appointments-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.PatientAppointments .appointments-table th,
+.PatientAppointments .appointments-table td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ccc;
+}
+
+.PatientAppointments .appointments-table th {
     font-weight: bold;
-    margin-bottom: 5px;
-  }
-  
-  .PatientAppointments li p {
-    font-size: 14px;
-    margin-bottom: 5px;
-  }
-  
-  .PatientPrescriptions {
-    margin-bottom: 20px;
-  }
-  
-  .PatientVitals {
-    margin-bottom: 20px;
-  }
-  
+}
+
+.PatientAppointments .appointments-table tbody tr:hover {
+    background-color: #f2f2f2;
+}
+
+.PatientPrescriptions {
+    margin-bottom: 30px;
+}
+
+.PatientVitals {
+    margin-bottom: 30px;
+}
+
+.loading-animation {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ccc;
+    border-top-color: #333;
+    border-radius: 50%;
+    animation: loading 1s infinite linear;
+}
+
+@keyframes loading {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
