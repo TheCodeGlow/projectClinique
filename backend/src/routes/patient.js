@@ -27,15 +27,15 @@ router.get('/patients', passportJwt, async (req, res, next) => {
 // Create a new patient
 router.post('/patients', passportJwt, async (req, res, next) => {
     try {
-        const { name, age, gender, address } = req.body;
+        const { firstName, lastName, dateOfBirth, gender, phone, address } = req.body;
 
         // Check if all fields are provided
-        if (!name || !age || !gender || !address) {
+        if (!firstName || !lastName || !dateOfBirth || !phone  || !gender || !address) {
             return res.status(400).json({ error: 'All fields are required' });
         }
 
         // Create a new patient
-        const patient = new Patient({ name, age, gender, address });
+        const patient = new Patient({ firstName, lastName, dateOfBirth, gender, phone, address });
         await patient.save();
 
         res.status(201).json(patient);

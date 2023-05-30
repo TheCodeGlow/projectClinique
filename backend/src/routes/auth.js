@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Account = require('../models/Account');
+const Patient = require('../models/Patient');
 const passportJwt = require('../config/passport');
 
 router.post('/register', async (req, res, next) => {
@@ -26,6 +27,9 @@ router.post('/register', async (req, res, next) => {
         // Create a new Account
         const account = new Account({ email, password: hashedPassword, isDoctor: false });
         await account.save();
+        // TODO: Create a new Patient
+        const patient = new Patient();
+        await patient.save();
 
         // Generate JWT token and send it back to the client
         const token = jwt.sign({ sub: account._id }, process.env.JWT_SECRET);

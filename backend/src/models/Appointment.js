@@ -12,7 +12,11 @@ const appointmentSchema = new mongoose.Schema({
     ref: 'Patient',
     required: true
   },
-  date: {
+  startTime: {
+    type: Date,
+    required: true
+  },
+  endTime: {
     type: Date,
     required: true
   },

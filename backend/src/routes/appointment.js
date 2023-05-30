@@ -16,7 +16,7 @@ router.get('/', passportJwt, async (req, res, next) => {
 // POST /appointments
 router.post('/', passportJwt, async (req, res, next) => {
   try {
-    const { doctor, patient, date, details } = req.body;
+    const { doctor, patient, startTime, endTime, details } = req.body;
 
     // Check if all fields are provided
     if (!doctor || !patient || !date || !details) {
@@ -24,7 +24,7 @@ router.post('/', passportJwt, async (req, res, next) => {
     }
 
     // Create a new Appointment
-    const appointment = new Appointment({ doctor, patient, date, details });
+    const appointment = new Appointment({ doctor, patient, startTime, endTime, details });
     await appointment.save();
 
     res.status(201).json(appointment);

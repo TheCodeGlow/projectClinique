@@ -1,16 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import useAuth from "../hooks/useAuth";
+import useAuth from "../../hooks/useAuth";
 //import css
-import "../pages/styles/home.css";
+import "../../pages/styles/home.css";
 
 function Navbar() {
   const { user, logout } = useAuth();
-
-
-
-
-
 
   return (
     <header className="header">
@@ -32,7 +27,7 @@ function Navbar() {
         <div className="header__nav">
           <Link to="/" className="header__navLinkHome">Home</Link>
           <Link to="/dashboard" className="header__navLink">Dashboard</Link>
-          <Link to="/doctor" className="header__navLink">Find a doctor</Link>
+          <Link to="/doctors" className="header__navLink">Find a doctor</Link>
           <Link to="#" class="header__navLink">Testimonials</Link>
           <Link to="#" class="header__navLink">About us</Link>
           <Link to="/" onClick={logout} class="header__navLink">Logout</Link>
@@ -42,7 +37,8 @@ function Navbar() {
           <div className="header__nav">
             <Link to="/" className="header__navLinkHome">Home</Link>
             <Link to="/dashboard" className="header__navLink">Dashboard</Link>
-            <Link to="/doctor" className="header__navLink">Find a doctor</Link>
+            <Link to="/doctors" className="header__navLink">Find a doctor</Link>
+            <Link to={`/patient/${user.patient}`} className="header__navLink">Profile</Link>
             <Link to="#" class="header__navLink">Testimonials</Link>
             <Link to="#" class="header__navLink">About us</Link>
             <Link to="/" onClick={logout} class="header__navLink">Logout</Link>
