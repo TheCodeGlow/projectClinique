@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 
-
 function FormContainer() {
     // using one state hook to store the form data as an object
     const [formData, setFormData] = useState({
-        name: "",
-        age: "",
+        firstName: "",
+        lastName: "",
+        dateOfBirth: "",
         gender: "",
         phone: "",
         email: "",
@@ -31,24 +31,35 @@ function FormContainer() {
             <p>Please fill in the following information</p>
             <form onSubmit={handleSubmit}>
                 <div className="FormGroup">
-                    <label htmlFor="name">Name</label>
+                    <label htmlFor="firstName">First Name</label>
                     <input
                         type="text"
-                        id="name"
-                        name="name"
-                        placeholder="Enter your name"
-                        value={formData.name}
+                        id="firstName"
+                        name="firstName"
+                        placeholder="Enter your first name"
+                        value={formData.firstName}
                         onChange={handleChange} // using the same handler for all fields
                     />
                 </div>
                 <div className="FormGroup">
-                    <label htmlFor="age">Age</label>
+                    <label htmlFor="lastName">Last Name</label>
                     <input
-                        type="number"
-                        id="age"
-                        name="age"
-                        placeholder="Enter your age"
-                        value={formData.age}
+                        type="text"
+                        id="lastName"
+                        name="lastName"
+                        placeholder="Enter your last name"
+                        value={formData.lastName}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="FormGroup">
+                    <label htmlFor="dateOfBirth">Date of Birth</label>
+                    <input
+                        type="date"
+                        id="dateOfBirth"
+                        name="dateOfBirth"
+                        placeholder="Enter your date of birth"
+                        value={formData.dateOfBirth}
                         onChange={handleChange}
                     />
                 </div>
@@ -78,6 +89,17 @@ function FormContainer() {
                     />
                 </div>
                 <div className="FormGroup">
+                    <label htmlFor="address">Address</label>
+                    <input
+                        type="text"
+                        id="address"
+                        name="address"
+                        placeholder="Enter your address"
+                        value={formData.address}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="FormGroup">
                     <label htmlFor="email">Email address</label>
                     <input
                         type="email"
@@ -101,7 +123,9 @@ function FormContainer() {
                 </div>
                 <button type="submit">Register</button>
             </form>
-            <p>By registering, you agree to the Terms of Service and Privacy Policy.</p>
+            <p>
+                By registering, you agree to the Terms of Service and Privacy Policy.
+            </p>
         </div>
     );
 }

@@ -8,10 +8,10 @@ const passportJwt = require('../config/passport');
 
 router.post('/register', async (req, res, next) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, firstName, lastName, dateOfBirth, gender, phone, address } = req.body;
 
         // Check if all fields are provided
-        if (!email || !password) {
+        if (!email || !password || !firstName || !lastName || !dateOfBirth || !gender || !phone || !address) {
             return res.status(400).json({ error: 'All fields are required' });
         }
 
@@ -24,12 +24,27 @@ router.post('/register', async (req, res, next) => {
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Create a new Account & Patient
-        const patient = new Patient();
-        const account = new Account({ email, password: hashedPassword, isDoctor: false, patient: patient._id});
-        await patient.save();
-        await account.save();
+        // Create a new Patient
+        const patient = new Patient({
+            firstName,
+            lastName,
+            dateOfBirth,
+            gender,
+            phone,
+            address
+        });
 
+        await patient.save();
+
+        // Create a new Account associated with the patient
+        const account = new Account({
+            email,
+            password: hashedPassword,
+            isDoctor: false,
+            patient: patient._id
+        });
+        
+        await account.save();
 
         // Generate JWT token and send it back to the client
         const token = jwt.sign({ sub: account._id }, process.env.JWT_SECRET);
@@ -39,6 +54,7 @@ router.post('/register', async (req, res, next) => {
         next(err);
     }
 });
+
 
 router.post('/login', async (req, res, next) => {
     try {
