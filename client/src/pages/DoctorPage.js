@@ -65,8 +65,10 @@ const DoctorPage = () => {
                                 <div className='doctor-status available'></div>
                                 <img src="https://img.freepik.com/free-photo/attractive-young-male-nutriologist-lab-coat-smiling-against-white-background_662251-2960.jpg?w=2000" alt="doctor" height="100" width="100" />
                             </div>
-                            <h3 className="Name"> john doe</h3>
-                            <label className="specialty">assassin</label>
+                            <div className="name-specialty">
+                                <h3 className="Name"> john doe</h3>
+                                <label className="specialty">assassin</label>
+                            </div>
                         </div>
                         <vl></vl>
                         <div class='doctor-specs'>
