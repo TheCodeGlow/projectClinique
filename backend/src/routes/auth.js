@@ -24,12 +24,12 @@ router.post('/register', async (req, res, next) => {
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Create a new Account
-        const account = new Account({ email, password: hashedPassword, isDoctor: false });
-        await account.save();
-        // TODO: Create a new Patient
+        // Create a new Account & Patient
         const patient = new Patient();
+        const account = new Account({ email, password: hashedPassword, isDoctor: false, patient: patient._id});
         await patient.save();
+        await account.save();
+
 
         // Generate JWT token and send it back to the client
         const token = jwt.sign({ sub: account._id }, process.env.JWT_SECRET);
