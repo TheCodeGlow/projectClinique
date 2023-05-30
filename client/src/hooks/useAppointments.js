@@ -16,10 +16,10 @@ const useAppointments = () => {
 
         return response.json();
     };
-
+    
     const { data, error, isLoading, isError } = useQuery("appointments", getAppointments);
-
-    return { data, error, isLoading, isError };
+    let appointments = data;
+    return { appointments, error, isLoading, isError };
 };
 
 const useCreateAppointment = () => {

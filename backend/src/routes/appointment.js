@@ -19,7 +19,7 @@ router.post('/', passportJwt, async (req, res, next) => {
     const { doctor, patient, startTime, endTime, details } = req.body;
 
     // Check if all fields are provided
-    if (!doctor || !patient || !date || !details) {
+    if (!doctor || !patient || !startTime || !endTime || !details) {
       return res.status(400).json({ error: 'All fields are required' });
     }
 

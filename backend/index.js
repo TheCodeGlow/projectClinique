@@ -35,7 +35,7 @@ const reminderRoutes = require('./src/routes/reminder');
 
 // Use API routes
 app.use('/api/auth', authRoutes);
-app.use('/api/', appointmentRoutes);
+app.use('/api/appointments', appointmentRoutes);
 app.use('/api/', consultationRoutes);
 app.use('/api/', doctorRoutes);
 app.use('/api/', feedbackRoutes);

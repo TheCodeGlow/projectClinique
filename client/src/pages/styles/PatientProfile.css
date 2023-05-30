@@ -1,0 +1,68 @@
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .PatientInfo {
+    margin-bottom: 20px;
+  }
+  
+  .PatientName h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .PatientDOB h3,
+  .PatientGender h3,
+  .PatientPhone h3,
+  .PatientAddress h3 {
+    font-size: 16px;
+    margin-bottom: 5px;
+  }
+  
+  .PatientAppointments h2 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .PatientAppointments p {
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+  
+  .PatientAppointments ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .PatientAppointments li {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .PatientAppointments li h3 {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .PatientAppointments li p {
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+  
+  .PatientPrescriptions {
+    margin-bottom: 20px;
+  }
+  
+  .PatientVitals {
+    margin-bottom: 20px;
+  }
+  
