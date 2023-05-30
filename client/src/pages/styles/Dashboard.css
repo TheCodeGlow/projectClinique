@@ -1,6 +1,7 @@
 /* Dashboard Page */
 .dashboard-page {
   display: flex;
+  width: 100%;  
   justify-content: space-between;
   animation: fadeIn 0.5s ease-in-out;
 }
@@ -95,42 +96,18 @@
 }
 
 /* Schedule Section */
-.schedule-section {
-  position: relative;
-}
-
-.schedule-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.schedule-table th,
-.schedule-table td {
-  border: 1px solid #ccc;
-  padding: 8px;
-}
-
-.schedule-table th {
-  background-color: #f2f2f2;
-  font-weight: bold;
-  text-align: center;
-}
-
-.schedule-table .time-column {
-  text-align: center;
-}
-
-.schedule-table .day-column {
-  font-weight: bold;
-}
-
 .schedule-events {
-  opacity: 0;
-  transition: opacity 0.3s ease-in;
+  display: none;
+  animation-duration: 0.5s;
+  animation-fill-mode: both;
 }
 
-.schedule-events.show {
-  opacity: 1;
+.show {
+  display: block;
+}
+
+.fade-in-animation {
+  animation-name: fade-in;
 }
 
 @keyframes fade-in {
@@ -143,23 +120,89 @@
   }
 }
 
-.schedule-events.fade-in-animation {
-  animation: fade-in 0.3s ease-in;
+.schedule-container {
+  max-height: unset;
+  overflow-y: hidden;
 }
 
-
-/* Appointment Section */
-.appointment-section {
-  margin-bottom: 20px;
+.schedule-table {
+  width: 80%;
+  border-collapse: collapse;
+  border: 1px solid #e1e4e8;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
 }
 
-.appointment-table {
-  width: 100%;
-  animation: fadeIn 0.5s ease-in-out;
+.schedule-table th,
+.schedule-table td {
+  padding: 0.5rem;
+  text-align: center;
 }
 
-.appointment-row:nth-child(even) {
-  background-color: #f5f5f5;
+.schedule-table th {
+  background-color: #f6f8fa;
+  border-bottom: 1px solid #e1e4e8;
+  color: #0366d6;
+}
+
+.schedule-table td {
+  border-bottom: 1px solid #e1e4e8;
+}
+
+.schedule-table .empty-cell {
+  width: 100px;
+}
+
+.schedule-table .time-column {
+  width: 100px;
+}
+
+.schedule-table .day-column {
+  width: 100px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.schedule-table .schedule-event {
+  display: inline-block;
+  height: 120px;
+  width: 300px;
+  margin: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 6px;
+  background-color: #f6f8fa;
+  border: 1px solid #e1e4e8;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.schedule-table .event-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.schedule-table .event-title {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #0366d6;
+}
+
+.schedule-table .event-location {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #586069;
+}
+
+.schedule-table .event-time {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #586069;
 }
 
 /* Calendar Section */

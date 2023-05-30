@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import useAuth from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import './styles/Login.css';
 
 function Login() {
     const [email, setEmail] = useState('');
@@ -23,26 +24,51 @@ function Login() {
 
     useEffect(() => {
         if (isLoginSuccess) {
-          navigate('/');
+            navigate('/');
         }
-      }, [isLoginSuccess, navigate]);
-    
+    }, [isLoginSuccess, navigate]);
+
+    if (isLoginLoading) {
+        return <div className="login-box">
+            <div className="loaderContainer">
+                <div className="loader" />
+            </div>
+        </div>;
+    }
 
     return (
-        <div className="container">
-            <div className="home-container">
-                <h2>Login</h2>
+        <div className="login-container">
+            <div className="login-box">
+                <h2>Login to HealthHub</h2>
                 <form onSubmit={handleSubmit}>
                     <label htmlFor="email">Email:</label>
-                    <input type="email" id="email" value={email} onChange={handleEmailChange} required />
+                    <input
+                        type="text"
+                        id="email"
+                        value={email}
+                        onChange={handleEmailChange}
+                        required
+                    />
 
                     <label htmlFor="password">Password:</label>
-                    <input type="password" id="password" value={password} onChange={handlePasswordChange} required />
+                    <input
+                        type="password"
+                        id="password"
+                        value={password}
+                        onChange={handlePasswordChange}
+                        required
+                    />
 
-                    <button type="submit">Login</button>
-                    {loginError && <div className="error">{loginError.message}</div>}
-                    {isLoginLoading && <div className='loaderContainer'><div className="loader" /><label id='loaderText'>Loading...</label></div>}
+                    <button type="submit" className="login-button">
+                        Log In
+                    </button>
                 </form>
+
+                <div className="login-links">
+                    <a href="/">Forgot Password?</a>
+                    <span className="divider">·</span>
+                    <a href="/">Create New Account</a>
+                </div>
             </div>
         </div>
     );

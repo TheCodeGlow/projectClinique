@@ -1,4 +1,14 @@
 /* DoctorPage.css */
+.doctor-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+}
 
 .page-label {
     display: flex;
@@ -20,11 +30,12 @@
     margin-bottom: 2%;
 }
 
-
 .wrapper {
+    
     display: flex;
     flex-direction: row;
     height: 100vh;
+    width: 100%;
 }
 
 .filter {
@@ -168,7 +179,7 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-evenly;
-    color : #fff;
+    color: #fff;
 }
 
 .doctors .selected .doctor-image img {

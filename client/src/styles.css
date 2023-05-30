@@ -5,151 +5,18 @@
 }
 
 /* Set body margin and padding to 0 */
-body {
-    margin: 0;
-    padding: 0;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 14px;
-    line-height: 1.5;
-    color: #24292e;
-    background-color: #fafbfc;
-}
-
-/* Set max-width to 100% and margin to auto on the container */
-.container {
-    max-width: 1160px;
+.mainWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     margin: 0 auto;
     padding: 0 16px;
 }
 
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #24292e;
-    color: #fff;
-    padding: 16px;
-}
 
-.navbar-links {
-    display: flex;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
 
-.navbar-links li:not(:last-child) {
-    margin-right: 16px;
-}
 
-.navbar-links li a {
-    color: #fff;
-    text-decoration: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    transition: all 0.3s ease;
-}
-
-.navbar-links li a:hover {
-    background-color: #fff;
-    color: #24292e;
-}
-
-.navbar-links li a.active {
-    background-color: #fff;
-    color: #24292e;
-}
-
-@media (max-width: 768px) {
-    .navbar-links {
-        flex-direction: column;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background-color: #24292e;
-        padding: 16px;
-        display: none;
-    }
-
-    .navbar-links li {
-        margin-bottom: 8px;
-    }
-
-    .navbar-links li a {
-        display: block;
-        padding: 8px 16px;
-    }
-
-    .navbar-links.active {
-        display: flex;
-        justify-content: space-between;
-        display: flex;
-    }
-
-    .navbar-toggle {
-        display: block;
-        width: 100%;
-        text-align: right;
-        cursor: pointer;
-        font-size: 2rem;
-    }
-}
-
-/* Set margin-top and padding to the container of the Home page */
-.home-container {
-    margin-top: 20px;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
-}
-
-/* Style the headings on the Home page */
-.home-container h2 {
-    margin-top: 0;
-}
-
-/* Style the list on the Home page */
-.home-container ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
-/* Style the list items on the Home page */
-.home-container li {
-    padding: 10px;
-    border-bottom: 1px solid #e1e4e8;
-}
-
-/* Style the input fields on the Home page */
-.home-container input[type="text"],
-.home-container input[type="email"],
-.home-container input[type="password"] {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #e1e4e8;
-    border-radius: 3px;
-    box-shadow: none;
-}
-
-/* Style the button on the Home page */
-.home-container button {
-    padding: 10px;
-    border: 1px solid #e1e4e8;
-    border-radius: 3px;
-    background-color: #0366d6;
-    color: #fff;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-/* Style the button on the Home page when hovering */
-.home-container button:hover {
-    background-color: #0366d6;
-}
-
+/*register page*/
 .FormContainer {
     display: flex;
     flex-direction: column;
@@ -278,24 +145,29 @@ body {
     height: 30px;
     animation: spin 1s linear infinite;
     margin: 0 auto;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
+}
 
-  .loaderContainer {
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.loaderContainer {
     display: flex;
     flex-direction: column;
     align-items: center;
-  }
+}
 
-  #loaderText{
+#loaderText {
     margin-top: 0.5rem;
     font-size: 0.8rem;
-  }
+}
 
-  .stat-card:hover{
+.stat-card:hover {
     background-color: rgba(180, 180, 180, 0.801);
-  }
+}
