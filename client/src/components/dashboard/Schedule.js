@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography } from '@material-ui/core';
-const Schedule = ({selectedDay, events}) => {
-  
+const Schedule = ({ selectedDay, events }) => {
+
   const scheduleTimes = generateTimeSlots();
 
   function generateTimeSlots() {
@@ -28,11 +28,7 @@ const Schedule = ({selectedDay, events}) => {
     const [eventStart, eventEnd] = event.time.split(" - ");
     const eventStartTime = new Date(`2000-01-01 ${eventStart}`).getTime();
     const eventEndTime = new Date(`2000-01-01 ${eventEnd}`).getTime();
-    console.log("🚀 ~ file: Schedule.js:31 ~ isEventTimeWithinSlot ~ eventStartTime:", eventStartTime)
-    console.log("🚀 ~ file: Schedule.js:32 ~ isEventTimeWithinSlot ~ eventEndTime:", eventEndTime)
     const slotTimeValue = new Date(`2000-01-01 ${slotTime}`).getTime();
-
-    console.log("🚀 ~ file: Schedule.js:35 ~ isEventTimeWithinSlot ~ slotTimeValue:", slotTimeValue)
     return slotTimeValue >= eventStartTime && slotTimeValue <= eventEndTime;
   }
 
@@ -57,8 +53,6 @@ const Schedule = ({selectedDay, events}) => {
                   const event = events.find(
                     (event) => event.day.includes(day) && isEventTimeWithinSlot(event, time)
                   );
-                  console.log("🚀 ~ file: Schedule.js:92 ~ {scheduleTimes.map ~ event:", event)
-
                   return (
                     <td key={`${day}-${time}`}>
                       {event && (
