@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const path = require('path');
-
 // Certificate for MongoDB connection
 const certificate = '../certs/devCA.pem';
 

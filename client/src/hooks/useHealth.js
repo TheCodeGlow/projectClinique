@@ -8,9 +8,9 @@ const usePatientHealthData = (patientId) => {
         ["patientHealthData", patientId], // Provide a unique query key
         () => fetch(API_URL+`/api/patients/${patientId}/health-data`).then((res) => res.json()) // Provide a query function that returns a promise
     );
-
+    let healthData = data;
     // Return the data, error, isLoading and isError values from the useQuery hook
-    return { data, error, isLoading, isError };
+    return { healthData, error, isLoading, isError };
 };
 
 // Define a custom hook that creates new health data for a patient by their ID

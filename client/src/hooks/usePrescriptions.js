@@ -10,8 +10,9 @@ const usePatientPrescriptions = (id) => {
         () => fetch(API_URL+`/api/patients/${id}/prescriptions`).then((res) => res.json())
     );
 
+    let prescriptions = data;
     // Return the data, error, isLoading and isError values from the useQuery hook
-    return { data, error, isLoading, isError };
+    return { prescriptions, error, isLoading, isError };
 };
 
 // Define a custom hook that creates a new prescription for a patient by their ID

@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const compression = require('compression');
 
+
 // Load environment variables from .env file
 require('dotenv').config();
 
@@ -50,6 +51,7 @@ app.use((req, res, next) => {
   console.log(`${req.method} ${req.path}`);
   next();
 });
+
 
 
 // Start server

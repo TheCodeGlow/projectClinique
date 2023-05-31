@@ -1,104 +1,63 @@
-.container {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    width: 100%;
-    padding: 30px;
-}
+/* PatientProfile.module.css */
 
-.PatientInfo,
-.PatientAppointments {
+.container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 10px;
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.PatientInfo {
-    flex: 1;
-}
-
-.PatientAppointments {
-    flex: 2;
-}
-
-.PatientImage img {
+    margin: 20px;
+  }
+  
+  .patientInfo_section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 10px;
+  }
+  
+  .information {
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .first-column {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .profile-picture {
     width: 200px;
     height: 200px;
-    object-fit: cover;
     border-radius: 50%;
-    margin-bottom: 20px;
-}
-
-.PatientName h1 {
-    font-size: 24px;
-    margin-bottom: 10px;
-}
-
-.PatientDOB h3,
-.PatientGender h3,
-.PatientPhone h3,
-.PatientAddress h3 {
-    font-size: 16px;
-    margin-bottom: 5px;
-}
-
-.PatientAppointments h2 {
-    font-size: 20px;
-    margin-bottom: 10px;
-}
-
-.PatientAppointments p {
-    margin: 0;
-}
-
-.PatientAppointments .appointments-table {
+  }
+  
+  h3 {
+    margin: 5px;
+  }
+  
+  .appointments_section,
+  .currentMeds_section,
+  .healthData_section {
+    width: 80%;
+    margin-top: 20px;
+  }
+  
+  .appointments-table,
+  .medications-list,
+  .vitals-table {
     width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-}
-
-.PatientAppointments .appointments-table th,
-.PatientAppointments .appointments-table td {
-    padding: 8px;
-    text-align: left;
-    border-bottom: 1px solid #ccc;
-}
-
-.PatientAppointments .appointments-table th {
-    font-weight: bold;
-}
-
-.PatientAppointments .appointments-table tbody tr:hover {
-    background-color: #f2f2f2;
-}
-
-.PatientPrescriptions {
-    margin-bottom: 30px;
-}
-
-.PatientVitals {
-    margin-bottom: 30px;
-}
-
-.loading-animation {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    border: 2px solid #ccc;
-    border-top-color: #333;
-    border-radius: 50%;
-    animation: loading 1s infinite linear;
-}
-
-@keyframes loading {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
-}
+  }
+  
+  .appointments-table th,
+  .appointments-table td,
+  .vitals-table th,
+  .vitals-table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+  
+  .medications-list li {
+    list-style-type: none;
+  }
+  

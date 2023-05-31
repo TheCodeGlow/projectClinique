@@ -1,155 +1,243 @@
-// Patient Schema
-// firstName: (String, required) first name of the patient
-// lastName: (String, required) last name of the patient
-// dateOfBirth: (Date, required) date of birth of the patient
-// gender: (String, enum: ['male', 'female', 'other'], required) gender of the patient
-// phone: (String, required) phone number of the patient
-// address: (String, required) address of the patient
-// appointments: (Array of ObjectId, ref: 'Appointment') array of references to appointments associated with the patient
-// reminders: (Array of ObjectId, ref: 'Reminder') array of references to reminders associated with the patient
-// healthData: (Array of ObjectId, ref: 'HealthData') array of references to health data associated with the patient
+// Health Data Schema
+// patient: (ObjectId, ref: 'Patient', required) reference to the patient associated with the health data
+// date: (Date, required) date of the health data measurement
+// type: (String, enum: ['steps', 'sleep', 'heartRate', 'bloodPressure'], required) type of health data measurement
+// value: (Number, required) value of the health data measurement
 
-// Appointment Schema
-// doctor: (ObjectId, ref: 'Doctor', required) reference to the doctor associated with the appointment
-// patient: (ObjectId, ref: 'Patient', required) reference to the patient associated with the appointment
-// startTime: (Date, required) start time of the appointment
-// endTime: (Date, required) end time of the appointment
-// reason: (String, required) reason for the appointment
 
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import NotFoundPage from "../home/NotFoundPage";
 import { usePatients } from "../../hooks/usePatients";
 import { useAppointments } from "../../hooks/useAppointments";
-import "../styles/PatientProfile.css"
+import { usePatientPrescriptions } from "../../hooks/usePrescriptions";
+import { usePatientHealthData } from "../../hooks/useHealth";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+    faHeartbeat,
+    faBed,
+    faRunning,
+    faTint,
+} from "@fortawesome/free-solid-svg-icons";
+import "../styles/PatientProfile.css";
 
 const PatientProfile = () => {
-    //get id from url
     const { id } = useParams();
-    //get patient data
     const { patients, isLoading: PatientLoading, error: PatientError } = usePatients();
-    //get appointment data
     const { appointments, isLoading: AppointmentsLoading, error: AppointmentsError } = useAppointments();
-    console.log(patients);
-    //set patient data
-    const [patient, setPatient] = useState(null);
-    console.log("CurrentPatient: ", patient)
-    const [patientAppointments, setPatientAppointments] = useState([])
-    console.log("CurrentAppointments: ", patientAppointments)
+    const { prescriptions, isLoading: PrescriptionsLoading, error: PrescriptionsError } = usePatientPrescriptions(id);
+    const { healthData, isLoading: HealthDataLoading, error: HealthDataError } = usePatientHealthData(id);
 
-    //get patient data
+    const [patient, setPatient] = useState(null);
+    const [patientAppointments, setPatientAppointments] = useState([]);
+    const [currentMedications, setCurrentMedications] = useState([]);
+    const [currentHealthData, setCurrentHealthData] = useState([]);
+
     useEffect(() => {
         if (patients) {
             const patient = patients.find((patient) => patient._id === id);
             setPatient(patient);
         }
     }, [patients, id]);
-    //get appointment data
+
     useEffect(() => {
         if (appointments) {
             const patientAppointments = appointments.filter((appointment) => appointment.patient === id);
-            setPatientAppointments(patientAppointments)
+            setPatientAppointments(patientAppointments);
         }
     }, [appointments, id]);
+
+    //get current patient medications
+    useEffect(() => {
+        if (prescriptions) {
+            const currentDate = new Date();
+            const filteredMedications = prescriptions.filter(
+                (prescription) => new Date(prescription.refillDate) >= currentDate
+            );
+            setCurrentMedications(filteredMedications);
+        }
+    }, [prescriptions]);
+
+    //get current patient health data
+    useEffect(() => {
+        if (healthData) {
+            const currentDate = new Date();
+            const filteredHealthData = healthData.filter((data) => new Date(data.date) >= currentDate);
+            setCurrentHealthData(filteredHealthData);
+        }
+    }, [healthData]);
+
 
 
 
     if (!patient && !PatientLoading) {
         return <NotFoundPage />;
     }
+
     return (
         <div className="container">
-            <div className="PatientInfo">
-                {/* display patient info */}
-                {PatientLoading ? (<div className="loading-animation" />) :
-                    (<>
-                        <div className="PatientImage">
-                            <img
-                                //get image of random person
-                                src="https://media.hswstatic.com/eyJidWNrZXQiOiJjb250ZW50Lmhzd3N0YXRpYy5jb20iLCJrZXkiOiJnaWZcL3BsYXlcLzBiN2Y0ZTliLWY1OWMtNDAyNC05ZjA2LWIzZGMxMjg1MGFiNy0xOTIwLTEwODAuanBnIiwiZWRpdHMiOnsicmVzaXplIjp7IndpZHRoIjo4Mjh9LCJ0b0Zvcm1hdCI6ImF2aWYifX0="
-                                alt="Patient"
-                            />
-                        </div>
-                        <div className="PatientName">
-                            <h1>{patient.firstName} {patient.lastName}</h1>
-                        </div>
-                        <div className="PatientDOB">
-                            <h3>Date of Birth:  {new Date(patient.dateOfBirth).getFullYear()}
-                                -
-                                {new Date(patient.dateOfBirth).getMonth() + 1}
-                                -
-                                {new Date(patient.dateOfBirth).getDate()}
-                            </h3>
-                        </div>
-                        <div className="PatientGender">
-                            <h3>
-                                Gender: {patient.gender}
-                            </h3>
-                        </div>
-                        <div className="PatientPhone">
-                            <h3>
-                                Phone: {patient.phone}
-                            </h3>
-                        </div>
-                        <div className="PatientAddress">
-                            <h3>
-                                Address: {patient.address}
-                            </h3>
-                        </div>
-                    </>)}
-            </div>
-            <div className="PatientAppointments">
-                <h2>Appointments</h2>
-                {AppointmentsLoading ? (
-                    <div className="loading-animation"></div>
+            <section className="patientInfo_section">
+                {/* Display patient info */}
+                {PatientLoading ? (
+                    <div className="loading-animation" />
                 ) : (
-                    <>
-                        {patientAppointments.length === 0 ? (
-                            <p>No appointments found.</p>
-                        ) : (
-                            <table className="appointments-table">
-                                <thead>
-                                    <tr>
-                                        <th>Num</th>
-                                        <th>Date</th>
-                                        <th>Time</th>
-                                        <th>Details</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {patientAppointments.map((appointment) => (
-                                        <tr key={appointment._id}>
-                                            <td>{
-                                                patientAppointments.indexOf(appointment) + 1
-                                            }</td>
-                                            <td>{new Date(appointment.startTime).toLocaleDateString()}</td>
-                                            <td>
-                                                {new Date(appointment.startTime).toLocaleTimeString([], {
-                                                    hour: "2-digit",
-                                                    minute: "2-digit",
-                                                    hour12: true,
-                                                })} -{" "}
-                                                {new Date(appointment.endTime).toLocaleTimeString([], {
-                                                    hour: "2-digit",
-                                                    minute: "2-digit",
-                                                    hour12: true,
-                                                })}
-                                            </td>
-                                            <td>{appointment.details}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        )}
-                    </>
+                    <div className="information">
+                        <div className="first-column">
+                            {/* complete the patient info here */}
+                            <img src={patient.profilePicture} className="profile-picture" alt="Profile" />
+                            <div >
+                                <h3>{patient.firstName} {patient.lastName}</h3>
+                            </div>
+                            <div >
+                                <div>
+                                    <h3>Date of Birth</h3>
+                                    <p>{new Date(patient.dateOfBirth).toLocaleDateString()}</p>
+                                </div>
+                                <div >
+                                    <h3>Age</h3>
+                                    <p>{new Date().getFullYear() - new Date(patient.dateOfBirth).getFullYear()}</p>
+                                </div>
+                            </div>
+                            <div >
+                                <div>
+                                    <h3>Weight</h3>
+                                    <p>{patient.weight} kg</p>
+                                </div>
+                                <div >
+                                    <h3>Height</h3>
+                                    <p>{patient.height} cm</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div >
+                            <div>
+                                <h3>Phone</h3>
+                                <p>{patient.phone}</p>
+                            </div>
+                            <div>
+                                <h3>Address</h3>
+                                <p>{patient.address}</p>
+                            </div>
+                            <div>
+                                <h3>Gender</h3>
+                                <p>{patient.gender}</p>
+                            </div>
+                        </div>
+                    </div>
                 )}
-            </div>
-            <div className="PatientPrescriptions">
-            </div>
-            <div className="PatientVitals">
-            </div>
+            </section>
+
+            <section className="appointments_section">
+                <div className="PatientAppointments">
+                    <h2>Appointments</h2>
+                    {AppointmentsLoading ? (
+                        <div className="loading-animation"></div>
+                    ) : (
+                        <>
+                            {patientAppointments.length === 0 ? (
+                                <p>No appointments found.</p>
+                            ) : (
+                                <table className="appointments-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Num</th>
+                                            <th>Date</th>
+                                            <th>Time</th>
+                                            <th>Details</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {patientAppointments.map((appointment) => (
+                                            <tr key={appointment._id}>
+                                                <td>{patientAppointments.indexOf(appointment) + 1}</td>
+                                                <td>{new Date(appointment.startTime).toLocaleDateString()}</td>
+                                                <td>
+                                                    {new Date(appointment.startTime).toLocaleTimeString([], {
+                                                        hour: "2-digit",
+                                                        minute: "2-digit",
+                                                        hour12: true,
+                                                    })} -{" "}
+                                                    {new Date(appointment.endTime).toLocaleTimeString([], {
+                                                        hour: "2-digit",
+                                                        minute: "2-digit",
+                                                        hour12: true,
+                                                    })}
+                                                </td>
+                                                <td>{appointment.details}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            )}
+                        </>
+                    )}
+                </div>
+            </section>
+
+            <section className="currentMeds_section">
+                <div className="PatientMedications">
+                    <h2>Current Medications</h2>
+                    {PrescriptionsLoading ? (
+                        <div className="loading-animation" />
+                    ) : (
+                        <>
+                            {currentMedications.length === 0 ? (
+                                <p>No current medications.</p>
+                            ) : (
+                                <ul className="medications-list">
+                                    {currentMedications.map((prescription) => (
+                                        <li key={prescription._id}>
+                                            <span className="medication-icon">[Pill Icon]</span>
+                                            <span className="medication-name">{prescription.medication}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </>
+                    )}
+                </div>
+            </section>
+
+            <section className="healthData_section">
+                <div className="PatientVitals">
+                    <h2>Vitals</h2>
+                    {HealthDataLoading ? (
+                        <div className="loading-animation" />
+                    ) : (
+                        <>
+                            {currentHealthData.length === 0 ? (
+                                <p>No vitals data available.</p>
+                            ) : (
+                                <table className="vitals-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Type</th>
+                                            <th>Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {currentHealthData.map((vital) => (
+                                            <tr key={vital._id}>
+                                                <td>{new Date(vital.date).toLocaleDateString()}</td>
+                                                <td>
+                                                    {vital.type === "heartRate" && <FontAwesomeIcon icon={faHeartbeat} />}
+                                                    {vital.type === "sleep" && <FontAwesomeIcon icon={faBed} />}
+                                                    {vital.type === "steps" && <FontAwesomeIcon icon={faRunning} />}
+                                                    {vital.type === "bloodPressure" && <FontAwesomeIcon icon={faTint} />}
+                                                </td>
+                                                <td>{vital.value}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            )}
+                        </>
+                    )}
+                </div>
+            </section>
         </div>
-    )
-}
+    );
+};
 
 export default PatientProfile;

@@ -84,7 +84,7 @@ const useAuth = () => {
     }
   }, [refetchUser, refetch]);
 
-  const logout = () => {
+  const DeleteToken = () => {
     localStorage.removeItem("token");
     setToken(null);
   };
@@ -102,7 +102,7 @@ const useAuth = () => {
     registerData,
     registerError,
     isRegisterLoading,
-    logout,
+    DeleteToken,
   };
 };
 
