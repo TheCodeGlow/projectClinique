@@ -1,252 +1,305 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useDoctors } from '../../hooks/useDoctors';
+
+//import custom hooks
 import useAuth from '../../hooks/useAuth';
+import { usePatients } from '../../hooks/usePatients';
+import { useAppointments, useCreateAppointment } from '../../hooks/useAppointments';
+import { usePatientPrescriptions } from '../../hooks/usePrescriptions';
+import { useDoctor } from '../../hooks/useDoctors';
+import { CalendarPicker, LocalizationProvider } from '@material-ui/lab';
+import AdapterDateFns from '@material-ui/lab/AdapterDateFns';
 import {
-    useAppointments,
-    useCreateAppointment,
-    useUpdateAppointment,
-    useCancelAppointment
-} from '../../hooks/useAppointments';
-import {
-    useConsultations,
-    useCreateConsultation,
-    useUpdateConsultation,
-    useCancelConsultation
-} from '../../hooks/useRemoteConsultation';
-import {
-    usePatientCommunication,
-    useSendMessageToPatient
-} from '../../hooks/usePatientCommunication';
+    TextField,
+    Button,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+} from '@material-ui/core';
+import '../styles/DoctorProfile.css';
 
 const DoctorProfile = () => {
-    const [message, setMessage] = useState('');
-    const [patientId, setPatientId] = useState('');
-    // Get doctor id from url
     const { id } = useParams();
+    const { user } = useAuth();
+    const { patients } = usePatients();
+    const { appointments } = useAppointments();
+    const { prescriptions } = usePatientPrescriptions();
+    const { doctor } = useDoctor(id);
+    console.log(doctor);
 
-    // Get doctor data from useDoctors hook
-    const { doctors, error: doctorsError, isLoading: doctorsLoading } = useDoctors();
+    // Booking appointment section logic
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [open, setOpen] = useState(false);
+    const [patient, setPatient] = useState('');
+    const [reason, setReason] = useState('');
+    const [startTime, setStartTime] = useState('');
+    const [endTime, setEndTime] = useState('');
+    const { createAppointment } = useCreateAppointment();
 
-    // Set doctor data to doctor state
-    const [doctor, setDoctor] = useState(null);
+    const handleDateChange = (date) => {
+        setSelectedDate(date);
+        setOpen(true);
+    };
+
+    const handleFormSubmit = (e) => {
+        e.preventDefault();
+        createAppointment({ patient, reason, startTime, endTime });
+        setOpen(false);
+    };
+
+    // patient list section logic
+    const [patientList, setPatientList] = useState([]);
+    const [search, setSearch] = useState('');
+    const [filteredPatients, setFilteredPatients] = useState([]);
 
     useEffect(() => {
-        if (doctors) {
-            const doctor = doctors.find((doctor) => doctor.id === id);
-            setDoctor(doctor);
+        if (patients && appointments && doctor) {
+            // get all patients that have an appointment with the doctor
+            const patientIds = appointments
+                .filter((appointment) => appointment.doctor === doctor._id)
+                .map((appointment) => appointment.patient);
+            // get all patients that have an appointment with the doctor
+            const patientList = patients.filter((patient) =>
+                patientIds.includes(patient._id)
+            );
+            setPatientList(patientList);
         }
-    }, [doctors, id]);
+    }, [patients, appointments, doctor]);
 
+    useEffect(() => {
+        if (patientList && search) {
+            setFilteredPatients(
+                patientList.filter((patient) =>
+                    patient.firstName.toLowerCase().includes(search.toLowerCase())
+                )
+            );
+        } else {
+            setFilteredPatients(patientList);
+        }
+    }, [search, patientList]);
 
+    // appointment list section logic
+    const [appointmentList, setAppointmentList] = useState([]);
+    const [searchAppointment, setSearchAppointment] = useState('');
+    const [filteredAppointments, setFilteredAppointments] = useState([]);
 
-    const user = useAuth(); // Assuming useAuth hook returns the authenticated user information
-    const isDoctor = user.role === 'doctor';
+    useEffect(() => {
+        if (appointments && doctor) {
+            // get all appointments that have the doctor
+            const appointmentList = appointments.filter((appointment) =>
+                appointment.doctor === doctor._id
+            );
+            setAppointmentList(appointmentList);
+        }
+    }, [appointments, doctor]);
 
-    // State for appointment form
-    const [appointmentDate, setAppointmentDate] = useState('');
-    const [appointmentTime, setAppointmentTime] = useState('');
-    const createAppointment = useCreateAppointment(); // Assuming this is a custom hook to handle appointment creation
+    useEffect(() => {
+        if (appointmentList && searchAppointment) {
+            setFilteredAppointments(
+                appointmentList.filter((appointment) =>
+                    appointment.patient.firstName
+                        .toLowerCase()
+                        .includes(searchAppointment.toLowerCase())
+                )
+            );
+        } else {
+            setFilteredAppointments(appointmentList);
+        }
+    }, [searchAppointment, appointmentList]);
 
-    // State for consultation form
-    const [consultationDate, setConsultationDate] = useState('');
-    const [consultationTime, setConsultationTime] = useState('');
-    const createConsultation = useCreateConsultation(); // Assuming this is a custom hook to handle consultation creation
+    // prescription list section
+    const [prescriptionList, setPrescriptionList] = useState([]);
+    const [searchPrescription, setSearchPrescription] = useState('');
+    const [filteredPrescriptions, setFilteredPrescriptions] = useState([]);
 
-    const handleAppointmentSubmit = (e) => {
-        e.preventDefault();
-        // Perform validation and submit appointment data
-        createAppointment({ date: appointmentDate, time: appointmentTime });
-        // Reset form fields
-        setAppointmentDate('');
-        setAppointmentTime('');
-    };
+    useEffect(() => {
+        if (prescriptions) {
+            setPrescriptionList(prescriptions);
+        }
+    }, [prescriptions]);
 
-    const handleConsultationSubmit = (e) => {
-        e.preventDefault();
-        // Perform validation and submit consultation data
-        createConsultation({ date: consultationDate, time: consultationTime });
-        // Reset form fields
-        setConsultationDate('');
-        setConsultationTime('');
-    };
-
-    // Appointment management features
-    const appointments = useAppointments(); // Assuming this is a custom hook to fetch and manage appointments
-    const updateAppointment = useUpdateAppointment(); // Assuming this is a custom hook to update appointments
-    const cancelAppointment = useCancelAppointment(); // Assuming this is a custom hook to cancel appointments
-
-    const handleAppointmentUpdate = (appointmentId, updatedData) => {
-        // Call the updateAppointment hook to update the appointment
-        updateAppointment(appointmentId, updatedData);
-    };
-
-    const handleAppointmentCancel = (appointmentId) => {
-        // Call the cancelAppointment hook to cancel the appointment
-        cancelAppointment(appointmentId);
-    };
-
-    // Consultation management features
-    const consultations = useConsultations(); // Assuming this is a custom hook to fetch and manage consultations
-    const updateConsultation = useUpdateConsultation(); // Assuming this is a custom hook to update consultations
-    const cancelConsultation = useCancelConsultation(); // Assuming this is a custom hook to cancel consultations
-
-    const handleConsultationUpdate = (consultationId, updatedData) => {
-        // Call the updateConsultation hook to update the consultation
-        updateConsultation(consultationId, updatedData);
-    };
-
-    const handleConsultationCancel = (consultationId) => {
-        // Call the cancelConsultation hook to cancel the consultation
-        cancelConsultation(consultationId);
-    };
-
-    // Patient communication features
-    const patientCommunication = usePatientCommunication(); // Assuming this is a custom hook to manage patient communication
-    const sendMessageToPatient = useSendMessageToPatient(); // Assuming this is a custom hook to send messages to patients
-
-    const handleSendMessageToPatient = (e) => {
-        e.preventDefault();
-        // Perform validation and send the message to the patient
-        sendMessageToPatient(patientId, message);
-        // Reset form fields
-        setPatientId('');
-        setMessage('');
-    };
-
-    if (doctorsLoading) {
-        return <h1>Loading..</h1>;
-    }
-
-    if (doctorsError) {
-        return <h1>Error..</h1>;
-    }
-
-    if (!doctor) {
-        return <h1>Doctor not found</h1>;
-    }
+    useEffect(() => {
+        if (prescriptionList && searchPrescription) {
+            setFilteredPrescriptions(
+                prescriptionList.filter((prescription) =>
+                    prescription.patient.firstName
+                        .toLowerCase()
+                        .includes(searchPrescription.toLowerCase())
+                )
+            );
+        } else {
+            setFilteredPrescriptions(prescriptionList);
+        }
+    }, [searchPrescription, prescriptionList]);
 
     return (
-        <div>
-            <h1>{doctor.name}'s Profile</h1>
-            <h2>Personal Information</h2>
-            {/* Display doctor's personal information */}
-            <p>Name: {doctor.name}</p>
-            <p>Email: {doctor.email}</p>
-            {/* Additional personal information for doctors */}
-            {isDoctor && (
-                <div>
-                    <h2>Specializations and Areas of Expertise</h2>
-                    {/* Display doctor's specializations and areas of expertise */}
-                    {/* ... */}
-                    <h2>Appointment Management</h2>
-                    <form onSubmit={handleAppointmentSubmit}>
-                        <label htmlFor="appointmentDate">Date:</label>
-                        <input
-                            type="text"
-                            id="appointmentDate"
-                            value={appointmentDate}
-                            onChange={(e) => setAppointmentDate(e.target.value)}
-                        />
-                        <label htmlFor="appointmentTime">Time:</label>
-                        <input
-                            type="text"
-                            id="appointmentTime"
-                            value={appointmentTime}
-                            onChange={(e) => setAppointmentTime(e.target.value)}
-                        />
-                        <button type="submit">Create Appointment</button>
-                    </form>
-                    {/* Display appointment management features */}
-                    {/* ... */}
-                    <h2>Consultation Management</h2>
-                    <form onSubmit={handleConsultationSubmit}>
-                        <label htmlFor="consultationDate">Date:</label>
-                        <input
-                            type="text"
-                            id="consultationDate"
-                            value={consultationDate}
-                            onChange={(e) => setConsultationDate(e.target.value)}
-                        />
-                        <label htmlFor="consultationTime">Time:</label>
-                        <input
-                            type="text"
-                            id="consultationTime"
-                            value={consultationTime}
-                            onChange={(e) => setConsultationTime(e.target.value)}
-                        />
-                        <button type="submit">Create Consultation</button>
-                    </form>
-                    {/* Display consultation management features */}
-                    {/* ... */}
-                    <h2>Patient Communication</h2>
-                    <form onSubmit={handleSendMessageToPatient}>
-                        <label htmlFor="patientId">Patient ID:</label>
-                        <input
-                            type="text"
-                            id="patientId"
-                            value={patientId}
-                            onChange={(e) => setPatientId(e.target.value)}
-                        />
-                        <label htmlFor="message">Message:</label>
-                        <textarea
-                            id="message"
-                            value={message}
-                            onChange={(e) => setMessage(e.target.value)}
-                        />
-                        <button type="submit">Send Message to Patient</button>
-                    </form>
-                    {/* Display patient communication features */}
-                    {/* ... */}
+        <div className="MainContainer">
+            {/* doctor info section */}
+            <section className="doctorInfo">
+                <div className="doctorInfo__image">
+                    <img src={doctor?.image} alt="doctor" />
                 </div>
-            )}
-            {!isDoctor && (
-                <div>
-                    <h2>Medical History</h2>
-                    {/* Display patient's medical history */}
-                    {/* ... */}
-                    <h2>Request Appointments</h2>
-                    <form onSubmit={handleAppointmentSubmit}>
-                        <label htmlFor="appointmentDate">Date:</label>
-                        <input
-                            type="text"
-                            id="appointmentDate"
-                            value={appointmentDate}
-                            onChange={(e) => setAppointmentDate(e.target.value)}
-                        />
-                        <label htmlFor="appointmentTime">Time:</label>
-                        <input
-                            type="text"
-                            id="appointmentTime"
-                            value={appointmentTime}
-                            onChange={(e) => setAppointmentTime(e.target.value)}
-                        />
-                        <button type="submit">Request Appointment</button>
-                    </form>
-                    {/* Display appointment request form */}
-                    {/* ... */}
-                    <h2>Request Consultations</h2>
-                    <form onSubmit={handleConsultationSubmit}>
-                        <label htmlFor="consultationDate">Date:</label>
-                        <input
-                            type="text"
-                            id="consultationDate"
-                            value={consultationDate}
-                            onChange={(e) => setConsultationDate(e.target.value)}
-                        />
-                        <label htmlFor="consultationTime">Time:</label>
-                        <input
-                            type="text"
-                            id="consultationTime"
-                            value={consultationTime}
-                            onChange={(e) => setConsultationTime(e.target.value)}
-                        />
-                        <button type="submit">Request Consultation</button>
-                    </form>
-                    {/* Display consultation request form */}
-                    {/* ... */}
+                <div className="doctorInfo__details">
+                    <h2>
+                        {doctor?.firstName} {doctor?.lastName}
+                    </h2>
+                    <h3>{doctor?.specialty}</h3>
+                    <p>{doctor?.description}</p>
                 </div>
-            )}
+            </section>
+            {/* Booking appointment section */}
+            <section className="bookingAppointment">
+                <h2>Book an Appointment</h2>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <CalendarPicker
+                        value={selectedDate}
+                        onChange={handleDateChange}
+                        renderInput={(props) => <TextField {...props} />}
+                    />
+                </LocalizationProvider>
+            </section>
+
+            {/* Popup form */}
+            <Dialog open={open} onClose={() => setOpen(false)}>
+                <DialogTitle>Book Appointment</DialogTitle>
+                <DialogContent>
+                    <form onSubmit={handleFormSubmit}>
+                        <div className="form__group">
+                            <label htmlFor="patient">Patient</label>
+                            <select
+                                name="patient"
+                                id="patient"
+                                value={patient}
+                                onChange={(e) => setPatient(e.target.value)}
+                            >
+                                {patients?.map((patient) => (
+                                    <option key={patient._id} value={patient._id}>
+                                        {patient.firstName} {patient.lastName}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="form__group">
+                            <label htmlFor="reason">Reason</label>
+                            <textarea
+                                name="reason"
+                                id="reason"
+                                cols="30"
+                                rows="10"
+                                value={reason}
+                                onChange={(e) => setReason(e.target.value)}
+                            ></textarea>
+                        </div>
+                        <div className="form__group">
+                            <label htmlFor="startTime">Start Time</label>
+                            <input
+                                type="text"
+                                name="startTime"
+                                id="startTime"
+                                value={startTime}
+                                onChange={(e) => setStartTime(e.target.value)}
+                            />
+                        </div>
+                        <div className="form__group">
+                            <label htmlFor="endTime">End Time</label>
+                            <input
+                                type="text"
+                                name="endTime"
+                                id="endTime"
+                                value={endTime}
+                                onChange={(e) => setEndTime(e.target.value)}
+                            />
+                        </div>
+                        <DialogActions>
+                            <Button onClick={() => setOpen(false)}>Cancel</Button>
+                            <Button type="submit" onClick={handleFormSubmit} color="primary">
+                                Book Appointment
+                            </Button>
+                        </DialogActions>
+                    </form>
+                </DialogContent>
+            </Dialog>
+            {/* patient list section */}
+            <section className="patientList">
+                <h2>Patients</h2>
+                <TextField
+                    label="Search"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                />
+                <ul>
+                    {filteredPatients?.map((patient) => (
+                        <li key={patient._id}>
+                            <div className="patientList__image">
+                                <img src={patient.image} alt="patient" />
+                            </div>
+                            <div className="patientList__details">
+                                <h3>
+                                    {patient.firstName} {patient.lastName}
+                                </h3>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </section>
+
+            {/* appointment list section */}
+            <section className="appointmentList">
+                <h2>Appointments</h2>
+                <TextField
+                    label="Search"
+                    value={searchAppointment}
+                    onChange={(e) => setSearchAppointment(e.target.value)}
+                />
+                <ul>
+                    {filteredAppointments?.map((appointment) => (
+                        <li key={appointment._id}>
+                            <div className="appointmentList__image">
+                                <img src={appointment.patient.image} alt="patient" />
+                            </div>
+                            <div className="appointmentList__details">
+                                <h3>
+                                    {appointment.patient.firstName} {appointment.patient.lastName}
+                                </h3>
+                                <p>{appointment.date}</p>
+                                <p>{appointment.time}</p>
+                                <p>{appointment.reason}</p>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </section>
+
+            {/* prescription list section */}
+            <section className="prescriptionList">
+                <h2>Prescriptions</h2>
+                <TextField
+                    label="Search"
+                    value={searchPrescription}
+                    onChange={(e) => setSearchPrescription(e.target.value)}
+                />
+                <ul>
+                    {filteredPrescriptions?.map((prescription) => (
+                        <li key={prescription._id}>
+                            <div className="prescriptionList__image">
+                                <img src={prescription.patient.image} alt="patient" />
+                            </div>
+                            <div className="prescriptionList__details">
+                                <h3>
+                                    {prescription.patient.firstName} {prescription.patient.lastName}
+                                </h3>
+                                <p>{prescription.date}</p>
+                                <p>{prescription.medication}</p>
+                                <p>{prescription.dosage}</p>
+                                <p>{prescription.instructions}</p>
+                                <p>{prescription.refills}</p>
+                                <p>{prescription.refillDate}</p>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </section>
         </div>
     );
 };

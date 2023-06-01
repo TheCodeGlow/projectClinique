@@ -38,6 +38,7 @@ function Navbar() {
           <Link to="/" className="header__navLinkHome">Home</Link>
           <Link to="/dashboard" className="header__navLink">Dashboard</Link>
           <Link to="/doctors" className="header__navLink">Find a doctor</Link>
+          <Link to={`/doctor/${currentUser.doctor}`} className="header__navLink">Profile</Link>
           <Link to="#" class="header__navLink">Testimonials</Link>
           <Link to="#" class="header__navLink">About us</Link>
           <Link to="/" onClick={logout} class="header__navLink">Logout</Link>

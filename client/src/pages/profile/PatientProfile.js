@@ -1,10 +1,3 @@
-// Health Data Schema
-// patient: (ObjectId, ref: 'Patient', required) reference to the patient associated with the health data
-// date: (Date, required) date of the health data measurement
-// type: (String, enum: ['steps', 'sleep', 'heartRate', 'bloodPressure'], required) type of health data measurement
-// value: (Number, required) value of the health data measurement
-
-
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import NotFoundPage from "../home/NotFoundPage";
@@ -23,10 +16,10 @@ import "../styles/PatientProfile.css";
 
 const PatientProfile = () => {
     const { id } = useParams();
-    const { patients, isLoading: PatientLoading, error: PatientError } = usePatients();
-    const { appointments, isLoading: AppointmentsLoading, error: AppointmentsError } = useAppointments();
-    const { prescriptions, isLoading: PrescriptionsLoading, error: PrescriptionsError } = usePatientPrescriptions(id);
-    const { healthData, isLoading: HealthDataLoading, error: HealthDataError } = usePatientHealthData(id);
+    const { patients, isLoading: PatientLoading } = usePatients();
+    const { appointments, isLoading: AppointmentsLoading } = useAppointments();
+    const { prescriptions, isLoading: PrescriptionsLoading } = usePatientPrescriptions(id);
+    const { healthData, isLoading: HealthDataLoading} = usePatientHealthData(id);
 
     const [patient, setPatient] = useState(null);
     const [patientAppointments, setPatientAppointments] = useState([]);

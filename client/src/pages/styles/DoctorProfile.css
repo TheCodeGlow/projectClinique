@@ -1,0 +1,169 @@
+/* Main container */
+.MainContainer {
+    padding: 20px;
+    width: 60%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 20px;
+}
+
+/* Doctor profile section */
+.doctorInfo {
+    grid-column: 1 / span 2;
+    background-color: #f6f8fa;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    align-content: center;
+    
+    gap: 20px;
+}
+
+.doctorInfo__image img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+}
+
+.doctorInfo__details h2 {
+    font-size: 24px;
+    color: #0366d6;
+    margin-bottom: 5px;
+}
+
+.doctorInfo__details h3 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.doctorInfo__details p {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Booking appointment section */
+.bookingAppointment {
+    grid-column: 1 / span 2;
+    background-color: #f6f8fa;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.bookingAppointment h2 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #0366d6;
+    margin-bottom: 10px;
+}
+
+/* Popup form */
+.dialogTitle {
+    background-color: #0366d6;
+    color: #fff;
+}
+
+.dialogContent {
+    padding: 20px;
+}
+
+.dialogActions {
+    padding: 10px 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.form__group {
+    margin-bottom: 20px;
+}
+
+.form__group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #0366d6;
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    resize: vertical;
+}
+
+input[type="text"],
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+/* Patient list section */
+.patientList {
+    grid-column: 1;
+    grid-row: 3;
+    background-color: #f6f8fa;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    animation: slide-in-left 0.5s ease-out;
+}
+
+/* Appointment list section */
+.appointmentList {
+    grid-column: 2;
+    grid-row: 3;
+    background-color: #f6f8fa;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    animation: slide-in-right 0.5s ease-out;
+}
+
+/* Prescription list section */
+.prescriptionList {
+    grid-column: 1 / span 2;
+    grid-row: 4;
+    background-color: #f6f8fa;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    animation: slide-in-bottom 0.5s ease-out;
+}
+
+/* Animations */
+@keyframes slide-in-left {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slide-in-right {
+    from {
+        transform: translateX(100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slide-in-bottom {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}

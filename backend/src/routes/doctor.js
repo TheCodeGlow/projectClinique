@@ -3,6 +3,16 @@ const router = express.Router();
 const Doctor = require('../models/Doctor');
 const passportJwt = require('../config/passport');
 
+router.get('/doctors/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const doctor = await Doctor.findById(id);
+    res.json(doctor);
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.get('/doctors', async (req, res, next) => {
   try {
     const doctors = await Doctor.find();

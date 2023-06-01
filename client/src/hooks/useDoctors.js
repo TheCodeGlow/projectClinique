@@ -21,9 +21,9 @@ const useDoctor = (id) => {
     const { data, error, isLoading, isError } = useQuery(["doctor", id], () =>
         axios.get(API_URL + `/api/doctors/${id}`).then((res) => res.data)
     );
-
+    let doctor = data;
     // Return the data, error and loading state
-    return { data, error, isLoading, isError };
+    return { doctor, error, isLoading, isError };
 };
 
 // Define a custom hook that creates a new doctor
