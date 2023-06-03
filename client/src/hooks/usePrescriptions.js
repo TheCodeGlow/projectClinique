@@ -7,7 +7,13 @@ const usePatientPrescriptions = (id) => {
     // Use the useQuery hook to make a GET request to /patients/{id}/prescriptions
     const { data, error, isLoading, isError } = useQuery(
         ["patientPrescriptions", id],
-        () => fetch(API_URL+`/api/patients/${id}/prescriptions`).then((res) => res.json())
+        () => fetch(API_URL + `/api/patients/${id}/prescriptions`,
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            }
+        ).then((res) => res.json())
     );
 
     let prescriptions = data;
@@ -23,7 +29,7 @@ const useCreatePatientPrescription = () => {
     // Use the useMutation hook to make a POST request to /patients/{id}/prescriptions
     const { mutate, isLoading, error, isSuccess } = useMutation(
         (newPrescription) =>
-            fetch(API_URL+`/api/patients/${newPrescription.id}/prescriptions`, {
+            fetch(API_URL + `/api/patients/${newPrescription.id}/prescriptions`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -50,7 +56,7 @@ const useUpdatePatientPrescription = () => {
     // Use the useMutation hook to make a PUT request to /patients/{id}/prescriptions/{prescription_id}
     const { mutate, isLoading, error, isSuccess } = useMutation(
         (updatedPrescription) =>
-            fetch( API_URL+`/api/patients/${updatedPrescription.id}/prescriptions/${updatedPrescription.prescription_id}`,
+            fetch(API_URL + `/api/patients/${updatedPrescription.id}/prescriptions/${updatedPrescription.prescription_id}`,
                 {
                     method: "PUT",
                     headers: {
@@ -79,7 +85,7 @@ const useDeletePatientPrescription = () => {
     // Use the useMutation hook to make a DELETE request to /patients/{id}/prescriptions/{prescription_id}
     const { mutate, isLoading, error, isSuccess } = useMutation(
         ({ id, prescription_id }) =>
-            fetch(API_URL+`/api/patients/${id}/prescriptions/${prescription_id}`, {
+            fetch(API_URL + `/api/patients/${id}/prescriptions/${prescription_id}`, {
                 method: "DELETE",
             }),
         {

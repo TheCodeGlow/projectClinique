@@ -17,6 +17,7 @@ router.get('/', passportJwt, async (req, res, next) => {
 router.post('/', passportJwt, async (req, res, next) => {
   try {
     const { doctor, patient, startTime, endTime, details } = req.body;
+    console.log("Appointment request body: ",req.body);
 
     // Check if all fields are provided
     if (!doctor || !patient || !startTime || !endTime || !details) {
