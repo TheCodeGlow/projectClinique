@@ -15,10 +15,13 @@ const useGetCurrentUser = (token) => {
     } else {
       return Promise.resolve(null); // Return a resolved promise with null if token is not available
     }
+  }, {
+    staleTime: 60000, // Set the stale time to 1 minute (adjust as needed)
   });
 
   return { user: data, error, isLoading, refetch };
 };
+
 const useAuth = () => {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [loading, setLoading] = useState(true);
@@ -73,26 +76,22 @@ const useAuth = () => {
     }
   );
 
-  useEffect(() => {
-    if (refetchUser) {
-      refetch().then(() => {
-        setLoading(false);
-      });
-      setRefetchUser(false);
-    } else {
-      setLoading(false);
-    }
-  }, [refetchUser, refetch]);
-
   const DeleteToken = () => {
     localStorage.removeItem("token");
     setToken(null);
   };
 
+  useEffect(() => {
+    if (refetchUser) {
+      setRefetchUser(false); // Reset the flag immediately
+    }
+  }, [refetchUser]);
+
   return {
     user,
     error,
-    isLoading: isLoading || loading, // Include isLoading from useGetCurrentUser
+    isLoading: isLoading || loading,
+    refetch,
     login,
     loginData,
     loginError,

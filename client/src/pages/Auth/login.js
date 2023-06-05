@@ -6,7 +6,7 @@ import './styles/Login.css';
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { login, isLoginLoading, loginError, isLoginSuccess } = useAuth();
+    const { login, isLoginLoading, isLoading, loginError, isLoginSuccess, refetch } = useAuth();
     let navigate = useNavigate();
 
     const handleEmailChange = (event) => {
@@ -24,11 +24,12 @@ function Login() {
 
     useEffect(() => {
         if (isLoginSuccess) {
+            refetch();
             navigate('/');
         }
-    }, [isLoginSuccess, navigate]);
+    }, [isLoginSuccess, navigate , refetch]);
 
-    if (isLoginLoading) {
+    if (isLoginLoading &&  !isLoading) {
         return <div className="login-box">
             <div className="loaderContainer">
                 <div className="loader" />

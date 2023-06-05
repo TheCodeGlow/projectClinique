@@ -162,8 +162,6 @@ const DoctorAppointment = ({ idPatient, idDoctor }) => {
             day = '0' + selectedDay;
         }
 
-
-
         const startDate =
             currentYear +
             '-' +

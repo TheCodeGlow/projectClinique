@@ -6,12 +6,17 @@ import { useAppointments } from "../../hooks/useAppointments";
 import { usePatientPrescriptions } from "../../hooks/usePrescriptions";
 import { usePatientHealthData } from "../../hooks/useHealth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Table, TableHead, TableBody, TableRow, TableCell } from '@material-ui/core';
 import {
     faHeartbeat,
     faBed,
     faRunning,
     faTint,
+    faPills,
+    faCalendarAlt,
+
 } from "@fortawesome/free-solid-svg-icons";
+import { FaComment } from "react-icons/fa";
 import "../styles/PatientProfile.css";
 
 const PatientProfile = () => {
@@ -19,7 +24,7 @@ const PatientProfile = () => {
     const { patients, isLoading: PatientLoading } = usePatients();
     const { appointments, isLoading: AppointmentsLoading } = useAppointments();
     const { prescriptions, isLoading: PrescriptionsLoading } = usePatientPrescriptions(id);
-    const { healthData, isLoading: HealthDataLoading} = usePatientHealthData(id);
+    const { healthData, isLoading: HealthDataLoading } = usePatientHealthData(id);
 
     const [patient, setPatient] = useState(null);
     const [patientAppointments, setPatientAppointments] = useState([]);
@@ -43,11 +48,11 @@ const PatientProfile = () => {
     //get current patient medications
     useEffect(() => {
         if (prescriptions) {
-            const currentDate = new Date();
-            const filteredMedications = prescriptions.filter(
-                (prescription) => new Date(prescription.refillDate) >= currentDate
-            );
-            setCurrentMedications(filteredMedications);
+            // const currentDate = new Date();
+            // const filteredMedications = prescriptions.filter(
+            //     (prescription) => new Date(prescription.refillDate) >= currentDate
+            // );
+            setCurrentMedications(prescriptions);
         }
     }, [prescriptions]);
 
@@ -60,7 +65,29 @@ const PatientProfile = () => {
         }
     }, [healthData]);
 
-
+    const mockHealthData = [
+        // heartRate sleep steps bloodPressure
+        {
+            date: "2021-05-01",
+            type: "heartRate",
+            value: 80
+        },
+        {
+            date: "2021-05-01",
+            type: "sleep",
+            value: 8
+        },
+        {
+            date: "2021-05-01",
+            type: "steps",
+            value: 10000
+        },
+        {
+            date: "2021-05-01",
+            type: "bloodPressure",
+            value: 120
+        },
+    ];
 
 
     if (!patient && !PatientLoading) {
@@ -68,83 +95,168 @@ const PatientProfile = () => {
     }
 
     return (
-        <div className="container">
-            <section className="patientInfo_section">
+        <div className="grid grid-cols-2 shadow-lg shadow-sky rounded-lg m-40 ">
+            <section className=" border row-span-2 p-5">
                 {/* Display patient info */}
                 {PatientLoading ? (
                     <div className="loading-animation" />
                 ) : (
-                    <div className="information">
-                        <div className="first-column">
+                    <div className="flex w-full">
+                        <div className="flex flex-col  w-3/4  border-r">
                             {/* complete the patient info here */}
-                            <img src={patient.profilePicture} className="profile-picture" alt="Profile" />
-                            <div >
-                                <h3>{patient.firstName} {patient.lastName}</h3>
+                            <img src="https://st4.depositphotos.com/1158045/23593/i/450/depositphotos_235938982-stock-photo-bright-portrait-senior-business-man.jpg" alt="Doctor"
+                                className="rounded-full  w-40 h-40 mx-auto mb-5 object-cover border-2 border-grey-400"
+                            />
+                            <div className="flex flex-col ml-4">
+                                <h3 className="text-4xl text-center font-bold text-gray-600 pb-6">{patient.firstName} {patient.lastName}</h3>
+                                <div className="grid grid-cols-2 mt-2 ">
+                                    <div>
+                                        <h3 className="text-sm font-bold text-gray-400 text-center">DOB</h3>
+                                        <p className="text-xl font-bold text-gray-500 text-center">{new Date(patient.dateOfBirth).toLocaleDateString()}</p>
+                                    </div>
+                                    <div>
+                                        <h3 className="text-sm font-bold text-gray-400 text-center">Age</h3>
+                                        <p className="text-xl font-bold text-gray-500 text-center">{new Date().getFullYear() - new Date(patient.dateOfBirth).getFullYear()}y</p>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-2 mt-2">
+                                    <div>
+                                        <h3 className="text-sm font-bold text-gray-400 text-center">Weight</h3>
+                                        <p className="text-xl font-bold text-gray-500 text-center">{patient.weight} kg</p>
+                                    </div>
+                                    <div>
+                                        <h3 className="text-sm font-bold text-gray-400 text-center">Height</h3>
+                                        <p className="text-xl font-bold text-gray-500 text-center">{patient.height} cm</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div >
-                                <div>
-                                    <h3>Date of Birth</h3>
-                                    <p>{new Date(patient.dateOfBirth).toLocaleDateString()}</p>
-                                </div>
-                                <div >
-                                    <h3>Age</h3>
-                                    <p>{new Date().getFullYear() - new Date(patient.dateOfBirth).getFullYear()}</p>
-                                </div>
-                            </div>
-                            <div >
-                                <div>
-                                    <h3>Weight</h3>
-                                    <p>{patient.weight} kg</p>
-                                </div>
-                                <div >
-                                    <h3>Height</h3>
-                                    <p>{patient.height} cm</p>
-                                </div>
-                            </div>
+                            {/* Message Button if currentuser not owner of profile */}
+ 
+                            <button className="flex items-center justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5 mr-6 ml-8">
+                                <FaComment className="mr-2" />
+                                Message
+                            </button>
+
                         </div>
-                        <div >
-                            <div>
-                                <h3>Phone</h3>
-                                <p>{patient.phone}</p>
+                        <div className="mr-10 ml-10">
+                            <div className="pb-7">
+                                <h3 className="text-sm font-bold text-gray-400">Home Address</h3>
+                                <p className="text-xl font-bold text-gray-500">{patient.address}</p>
                             </div>
-                            <div>
-                                <h3>Address</h3>
-                                <p>{patient.address}</p>
-                            </div>
-                            <div>
-                                <h3>Gender</h3>
-                                <p>{patient.gender}</p>
+                            <div className="pb-7">
+                                <h3 className="text-sm font-bold text-gray-400">Phone</h3>
+                                <p className="text-xl font-bold text-gray-500">{patient.phone}</p>
                             </div>
                         </div>
                     </div>
                 )}
             </section>
 
-            <section className="appointments_section">
+            <section className="border p-5">
+                <div className="">
+                    <h2 className="text-2xl font-bold text-gray-500 border-b pb-4">Current Medications</h2>
+                    {PrescriptionsLoading ? (
+                        <div className="loading-animation" />
+                    ) : (
+                        <>
+                            {currentMedications.length === 0 ? (
+                                <p className="text-xl font-bold text-gray-500 text-center">No current medications.</p>
+                            ) : (
+                                <ul className=" flex flex-col mt-4">
+                                    {currentMedications.map((prescription) => (
+                                        <li key={prescription._id} className="flex items-center">
+                                            <span className=" text-4xl text-sky-600 ml-2 mr-2">
+                                                <FontAwesomeIcon icon={faPills} />
+                                            </span>
+                                            <span className="text-4xl text-gray-500 font-semibold">{prescription.medication}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </>
+                    )}
+                </div>
+            </section>
+
+            <section className="border p-5">
+                <div className="flex flex-col ">
+                    <h2 className=" text-2xl font-bold text-gray-500 border-b pb-4">Vitals</h2>
+                    {!mockHealthData ? (
+                        <div className="loading-animation" />
+                    ) : (
+                        <>
+                            {mockHealthData.length === 0 ? (
+                                <p className="text-xl font-bold text-gray-500 text-center">No vitals data available.</p>
+                            ) : (
+                                <div className="flex self-center mt-4 space-x-4 items-center justify-items-center">
+                                    {mockHealthData.map((vital) => (
+                                        <div key={vital._id} className="text-center">
+                                            <div className="text-7xl text-sky-600">
+                                                {vital.type === "heartRate" && <FontAwesomeIcon icon={faHeartbeat} />}
+                                                {vital.type === "sleep" && <FontAwesomeIcon icon={faBed} />}
+                                                {vital.type === "steps" && <FontAwesomeIcon icon={faRunning} />}
+                                                {vital.type === "bloodPressure" && <FontAwesomeIcon icon={faTint} />}
+                                            </div>
+                                            <h3 className="text-md font-bold text-gray-400">{vital.type}</h3>
+                                            {vital.type === "bloodPressure" && (
+                                                <p className="text-2xl font-bold text-gray-500">
+                                                    {vital.value} mmHg
+                                                </p>
+                                            )}
+                                            {vital.type === "heartRate" && (
+                                                <p className="text-2xl font-bold text-gray-500">
+                                                    {vital.value} bpm
+                                                </p>
+                                            )}
+                                            {vital.type === "sleep" && (
+                                                <p className="text-2xl font-bold text-gray-500">
+                                                    {vital.value} hrs
+                                                </p>
+                                            )}
+                                            {vital.type === "steps" && (
+                                                <p className="text-2xl font-bold text-gray-500">
+                                                    {vital.value} steps
+                                                </p>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </>
+                    )}
+                </div>
+            </section>
+            <section className="border p-5 col-span-2">
                 <div className="PatientAppointments">
-                    <h2>Appointments</h2>
+                    <h2 className="text-3xl font-bold text-gray-500 border-b pb-4 pl-10">Appointments</h2>
                     {AppointmentsLoading ? (
                         <div className="loading-animation"></div>
                     ) : (
                         <>
                             {patientAppointments.length === 0 ? (
-                                <p>No appointments found.</p>
+                                <p className="text-xl font-bold text-gray-500 text-center">No appointments found.</p>
                             ) : (
-                                <table className="appointments-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Num</th>
-                                            <th>Date</th>
-                                            <th>Time</th>
-                                            <th>Details</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {patientAppointments.map((appointment) => (
-                                            <tr key={appointment._id}>
-                                                <td>{patientAppointments.indexOf(appointment) + 1}</td>
-                                                <td>{new Date(appointment.startTime).toLocaleDateString()}</td>
-                                                <td>
+                                <Table className="appointments-table mt-4">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell className=""></TableCell>
+                                            <TableCell className="text-gray-400 text-xl font-bold">Date</TableCell>
+                                            <TableCell className="text-gray-400 text-xl font-bold">Time</TableCell>
+                                            <TableCell className="text-gray-400 text-xl font-bold">Details</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {patientAppointments.map((appointment, index) => (
+                                            <TableRow key={appointment._id}>
+                                                <TableCell>
+                                                    <span className=" text-4xl text-sky-600 ml-2 mr-2">
+                                                        <FontAwesomeIcon icon={faCalendarAlt} />
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell className="text-gray-500 text-xl font-bold">
+                                                    {new Date(appointment.startTime).toLocaleDateString()}
+                                                </TableCell>
+                                                <TableCell className="text-gray-500 text-xl font-bold">
                                                     {new Date(appointment.startTime).toLocaleTimeString([], {
                                                         hour: "2-digit",
                                                         minute: "2-digit",
@@ -155,75 +267,12 @@ const PatientProfile = () => {
                                                         minute: "2-digit",
                                                         hour12: true,
                                                     })}
-                                                </td>
-                                                <td>{appointment.details}</td>
-                                            </tr>
+                                                </TableCell>
+                                                <TableCell className="text-gray-500 text-xl font-bold">{appointment.details}</TableCell>
+                                            </TableRow>
                                         ))}
-                                    </tbody>
-                                </table>
-                            )}
-                        </>
-                    )}
-                </div>
-            </section>
-
-            <section className="currentMeds_section">
-                <div className="PatientMedications">
-                    <h2>Current Medications</h2>
-                    {PrescriptionsLoading ? (
-                        <div className="loading-animation" />
-                    ) : (
-                        <>
-                            {currentMedications.length === 0 ? (
-                                <p>No current medications.</p>
-                            ) : (
-                                <ul className="medications-list">
-                                    {currentMedications.map((prescription) => (
-                                        <li key={prescription._id}>
-                                            <span className="medication-icon">[Pill Icon]</span>
-                                            <span className="medication-name">{prescription.medication}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
-                        </>
-                    )}
-                </div>
-            </section>
-
-            <section className="healthData_section">
-                <div className="PatientVitals">
-                    <h2>Vitals</h2>
-                    {HealthDataLoading ? (
-                        <div className="loading-animation" />
-                    ) : (
-                        <>
-                            {currentHealthData.length === 0 ? (
-                                <p>No vitals data available.</p>
-                            ) : (
-                                <table className="vitals-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Date</th>
-                                            <th>Type</th>
-                                            <th>Value</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {currentHealthData.map((vital) => (
-                                            <tr key={vital._id}>
-                                                <td>{new Date(vital.date).toLocaleDateString()}</td>
-                                                <td>
-                                                    {vital.type === "heartRate" && <FontAwesomeIcon icon={faHeartbeat} />}
-                                                    {vital.type === "sleep" && <FontAwesomeIcon icon={faBed} />}
-                                                    {vital.type === "steps" && <FontAwesomeIcon icon={faRunning} />}
-                                                    {vital.type === "bloodPressure" && <FontAwesomeIcon icon={faTint} />}
-                                                </td>
-                                                <td>{vital.value}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                                    </TableBody>
+                                </Table>
                             )}
                         </>
                     )}
