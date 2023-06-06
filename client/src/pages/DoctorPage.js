@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDoctors } from '../hooks/useDoctors';
 import { useDoctorFilters } from '../hooks/useDoctorsFilter';
 import './styles/DoctorPage.css'; // import the CSS file
@@ -8,7 +8,14 @@ const DoctorPage = () => {
     const [specialtyFilter, setSpecialtyFilter] = useState('');
 
     const { doctors, error: doctorsError, isLoading: doctorsLoading } = useDoctors();
-    const filteredDoctors = useDoctorFilters(doctors, nameFilter, specialtyFilter);
+    const [filteredDoctors, setFilteredDoctors] = useState(doctors);
+    const filter = useDoctorFilters(doctors, nameFilter, specialtyFilter);
+
+    useEffect(() => {
+        if (filter) {
+            setFilteredDoctors(filter);
+        }
+    }, [filter]);
 
     const handleNameFilterChange = (event) => {
         setNameFilter(event.target.value);
@@ -19,21 +26,15 @@ const DoctorPage = () => {
     };
 
     if (doctorsLoading) {
-        return (
-            <h1>Loading..</h1>
-        )
+        return <h1>Loading..</h1>;
     }
 
-    console.log("doctors: " + doctors)
-    console.log("filteredDoctors: " + filteredDoctors)
-
-
-
+    
     return (
         <div className="doctor-page">
             <h1 className="page-label">Search Doctor, Make an appointment</h1>
-            <h4 className='page-description'>Discover the best doctors nearest to you.</h4>
-            <hr></hr>
+            <h4 className="page-description">Discover the best doctors nearest to you.</h4>
+            <hr />
             <div className="wrapper">
                 <div className="filter">
                     <div className="filter-item">
@@ -59,38 +60,41 @@ const DoctorPage = () => {
                 </div>
 
                 <div className="doctors">
-                    <div className="doctor selected" key="1">
-                        <div class='doctor-info'>
-                            <div className='doctor-image'>
-                                <div className='doctor-status available'></div>
-                                <img src="https://img.freepik.com/free-photo/attractive-young-male-nutriologist-lab-coat-smiling-against-white-background_662251-2960.jpg?w=2000" alt="doctor" height="100" width="100" />
+                    {filteredDoctors && filteredDoctors.length > 0 ? (
+                        filteredDoctors.map((doctor) => (
+                            <div
+                                className="doctor available"
+                                key={doctor._id}
+                            >
+                                <div class="doctor-info">
+                                    <div className="doctor-image">
+                                        <div className="doctor-status available"></div>
+                                        <img
+                                            src="https://img.freepik.com/free-photo/attractive-young-male-nutriologist-lab-coat-smiling-against-white-background_662251-2960.jpg?w=2000"
+                                            alt="doctor"
+                                            height="100"
+                                            width="100"
+                                        />
+                                    </div>
+                                    <div className="name-specialty">
+                                        <h3 className="Name">{`${doctor.firstName} ${doctor.lastName}`}</h3>
+                                        <label className="specialty">{doctor.specialty}</label>
+                                    </div>
+                                </div>
+                                <vl></vl>
+                                <div class="doctor-specs">
+                                    <h3>Degree</h3>
+                                    <p>{doctor.degree}</p>
+                                    <h3>Specialty</h3>
+                                    <p>{doctor.specialty}</p>
+                                    <h3>Location</h3>
+                                    <p>{doctor.address}</p>
+                                    <p>Booking available Online</p>
+                                </div>
                             </div>
-                            <div className="name-specialty">
-                                <h3 className="Name"> john doe</h3>
-                                <label className="specialty">assassin</label>
-                            </div>
-                        </div>
-                        <vl></vl>
-                        <div class='doctor-specs'>
-                            <h3>Degree</h3>
-                            <p>MD</p>
-                            <h3>Specialty</h3>
-                            <p>assassin</p>
-                            <h3>Location</h3>
-                            <p>1234 Main St, New York, NY 10001</p>
-                            <p>Booking available Online</p>
-                        </div>
-                    </div>
-                    {(filteredDoctors && filteredDoctors.map((doctor) => (
-                        <div className="doctor available" key={doctor._id}>
-                            <div className='doctor-status available'></div>
-                            <div className='doctor-image'>
-                                <img src="https://img.freepik.com/free-photo/attractive-young-male-nutriologist-lab-coat-smiling-against-white-background_662251-2960.jpg?w=2000" alt="doctor" height="100" width="100" />
-                            </div>
-                            <h3 className="Name"> {`${doctor.firstName} ${doctor.lastName}`}</h3>
-                            <label className="specialty">{doctor.specialty}</label>
-                        </div>
-                    ))
+                        ))
+                    ) : (
+                        <p>No doctors found.</p>
                     )}
                 </div>
             </div>

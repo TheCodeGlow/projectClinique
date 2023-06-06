@@ -1,4 +1,5 @@
 /* DoctorPage.css */
+
 .doctor-page {
     display: flex;
     flex-direction: column;
@@ -6,8 +7,8 @@
     justify-content: center;
     width: 100%;
     height: 100%;
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
 }
 
 .page-label {
@@ -17,7 +18,7 @@
     font-weight: bold;
     color: #333;
     margin-bottom: 5px;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 .page-description {
@@ -25,13 +26,12 @@
     justify-content: center;
     font-size: 1.5em;
     color: #7e7c7c;
-    margin: 0px;
+    margin: 0;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     margin-bottom: 2%;
 }
 
 .wrapper {
-    
     display: flex;
     flex-direction: row;
     height: 100vh;
@@ -48,7 +48,6 @@
 .filter-item {
     display: flex;
     flex-direction: column;
-
     margin: 10px;
 }
 
@@ -60,31 +59,22 @@
 }
 
 .filter input {
-    width: 95%;
-    height: 60px;
-    /* reduce the height */
+    width: 100%;
+    height: 40px;
     border-radius: 5px;
-    /* reduce the border radius */
     border: 1px solid #ccc;
-    /* add a border */
     padding: 5px;
-    /* reduce the padding */
     font-size: 16px;
-    /* reduce the font size */
 }
 
 .doctors {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-gap: 0px;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-gap: 10px;
     width: 80%;
-    /* change to 80% */
-    height: 90%;
-    /* change to 80% */
+    height: 80%;
     margin: 20px;
-    /* add margin */
-    overflow-y: scroll;
-    /* add scroll */
+    overflow-y: auto;
 }
 
 .doctor {
@@ -95,6 +85,11 @@
     aspect-ratio: 1/1;
     box-sizing: border-box;
     border: 1px solid #b3b3b3;
+    transition: all 1s ease;
+    flex-grow: 1;
+    /* Add this property */
+    min-width: 250px;
+    /* Add this property */
 }
 
 .doctor .doctor-image {
@@ -105,15 +100,19 @@
 
 .doctor .doctor-status {
     position: relative;
-    top: 5%;
-    left: 10%;
-    bottom: auto;
-    right: auto;
+    top: 10%;
+    left: 4%;
     width: 15px;
     height: 15px;
     border-radius: 50%;
     background-color: darkblue;
     border: 1px solid white;
+    transition: all 1s ease;
+}
+
+.doctor:hover .doctor-status {
+    /* hide */
+    display: none;
 }
 
 .doctor.available .doctor-status {
@@ -134,12 +133,12 @@
 
 .doctor .doctor-image img {
     height: 100px;
-    aspect-ratio: 1/1;
+    width: 100px;
     object-fit: cover;
     border-radius: 50%;
     outline-offset: 2px;
     outline: 1px solid darkblue;
-    /* change to 50% */
+    transition: all 1s ease;
 }
 
 .doctor.available .doctor-image img {
@@ -171,53 +170,74 @@
     color: #777;
 }
 
-.doctors .selected {
+.doctor:hover  {
     background-color: #0A1129;
-    grid-column: 1/span 2;
+    grid-column: auto / span 2;
+    /* Change this property */
     aspect-ratio: 2/1;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-evenly;
+    cursor: pointer;
     color: #fff;
 }
 
-.doctors .selected .doctor-image img {
+/* how can the last doctor card expend when there is not space in the */
+
+
+
+.doctor:hover .doctor-image img {
     outline-offset: 3px;
     outline: 2px dashed rgb(255, 255, 255);
 }
 
-.doctors .selected .doctor-status{
-    left: 80%;
-    top: 80%;
-    align-self: self-start;
-    /* HERE */
+.doctor:hover  .doctor-status {
+    left: auto;
+    top: auto;
+    bottom: 5%;
+    right: 10%;
+    align-self: flex-start;
 }
 
-.doctors .doctor-specs{
+.doctor .doctor-specs {
     display: none;
 }
 
-.doctors.selected .doctor-specs {
-    display: default;
+.doctor .doctor-specs h3 {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #767676;
+    margin-bottom: 2px;
 }
 
-.doctors .selected .doctor-info .name-specialty{
+.doctor .doctor-specs p {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 2px;
+}
+
+.doctor:hover  .doctor-specs {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.doctor:hover  .doctor-info .name-specialty {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 }
 
-.doctors .selected .doctor-info .Name{
+.doctor:hover  .doctor-info .Name {
     color: #fff;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     font-size: 2em;
-
-    /* HERE */
 }
 
-.doctor.selected vl {
+.doctor:hover  vl {
     border-left: 1px solid #fff;
     height: 60%;
     margin: 0 10px;
