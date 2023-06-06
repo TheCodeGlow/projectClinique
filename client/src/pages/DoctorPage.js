@@ -29,7 +29,7 @@ const DoctorPage = () => {
         return <h1>Loading..</h1>;
     }
 
-    
+
     return (
         <div className="doctor-page">
             <h1 className="page-label">Search Doctor, Make an appointment</h1>
@@ -91,6 +91,12 @@ const DoctorPage = () => {
                                     <p>{doctor.address}</p>
                                     <p>Booking available Online</p>
                                 </div>
+                                <button
+                                    className="view-profile-button"
+                                    onClick={() => {
+                                        window.location.href = `/doctor/${doctor._id}`;
+                                    }}
+                                >View Profile</button>
                             </div>
                         ))
                     ) : (

@@ -7,7 +7,7 @@
     justify-content: center;
     width: 100%;
     height: 100%;
-    margin: 0;
+    margin-top: 35px;
     padding: 0;
 }
 
@@ -160,14 +160,40 @@
 .doctor .Name {
     font-size: 24px;
     font-weight: bold;
+    margin-top: 10px;
     color: #333;
+    text-align: center;
     margin-bottom: 5px;
 }
 
 .doctor .specialty {
     font-size: 18px;
-    font-style: italic;
-    color: #777;
+    font-weight: 600;
+    text-align: center;
+    color: #7f7f7fde;
+}
+
+.view-profile-button {
+    position: relative;
+    top: -110px;
+    right: 10px;
+    display: none;
+    padding: 5px 10px;
+    background-color: transparent;
+    border: solid;
+    border-width: 1px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+
+
+.doctor:hover .view-profile-button {
+    display: block;
+}
+.doctor:hover .view-profile-button:active {
+    background-color: #0A1129;
+    color: #fff;
 }
 
 .doctor:hover  {
@@ -206,14 +232,14 @@
 
 .doctor .doctor-specs h3 {
     font-size: 1.5em;
-    font-weight: bold;
-    color: #767676;
+    font-weight: 200;
+    color: #bcbcbc;
     margin-bottom: 2px;
 }
 
 .doctor .doctor-specs p {
     font-size: 1.2em;
-    font-weight: bold;
+    font-weight: bold; 
     color: #ffffff;
     margin-bottom: 2px;
 }
@@ -221,6 +247,12 @@
 .doctor:hover  .doctor-specs {
     display: flex;
     flex-direction: column;
+    justify-content: center;
+}
+.doctor .doctor-info .name-specialty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
 }
 
@@ -235,6 +267,12 @@
     color: #fff;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     font-size: 2em;
+}
+.doctor:hover  .doctor-info .specialty{
+    color: #fff;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 1.1em;
+    font-weight: 200;
 }
 
 .doctor:hover  vl {
