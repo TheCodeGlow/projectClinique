@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import NotFoundPage from "../home/NotFoundPage";
 import { usePatients } from "../../hooks/usePatients";
 import { useAppointments } from "../../hooks/useAppointments";
 import { usePatientPrescriptions } from "../../hooks/usePrescriptions";
 import { usePatientHealthData } from "../../hooks/useHealth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import useAuth from "../../hooks/useAuth";
 import { Table, TableHead, TableBody, TableRow, TableCell } from '@material-ui/core';
 import {
     faHeartbeat,
@@ -16,11 +17,18 @@ import {
     faCalendarAlt,
 
 } from "@fortawesome/free-solid-svg-icons";
-import { FaComment } from "react-icons/fa";
+import { FaComment, FaUserEdit } from "react-icons/fa";
 import "../styles/PatientProfile.css";
 
+
+// TODO: Add the following to the patient profile page:
+// TODO 1. Patient info ( weight, height, image)
+// TODO 2. if current user is doctor, add a button to add a prescription
+// TODO 3. patient edit page
 const PatientProfile = () => {
+
     const { id } = useParams();
+    const { user } = useAuth();
     const { patients, isLoading: PatientLoading } = usePatients();
     const { appointments, isLoading: AppointmentsLoading } = useAppointments();
     const { prescriptions, isLoading: PrescriptionsLoading } = usePatientPrescriptions(id);
@@ -93,6 +101,9 @@ const PatientProfile = () => {
     if (!patient && !PatientLoading) {
         return <NotFoundPage />;
     }
+    if (!user && !patient) {
+        return <div className="loading-animation" />;
+    }
 
     return (
         <div className="grid grid-cols-2 shadow-lg shadow-sky rounded-lg m-40 ">
@@ -104,7 +115,7 @@ const PatientProfile = () => {
                     <div className="flex w-full">
                         <div className="flex flex-col  w-3/4  border-r">
                             {/* complete the patient info here */}
-                            <img src="https://st4.depositphotos.com/1158045/23593/i/450/depositphotos_235938982-stock-photo-bright-portrait-senior-business-man.jpg" alt="Doctor"
+                            <img src={process.env.PUBLIC_URL + '/uploads/' + patient.profilePicture} alt="Doctor"
                                 className="rounded-full  w-40 h-40 mx-auto mb-5 object-cover border-2 border-grey-400"
                             />
                             <div className="flex flex-col ml-4">
@@ -131,11 +142,23 @@ const PatientProfile = () => {
                                 </div>
                             </div>
                             {/* Message Button if currentuser not owner of profile */}
- 
-                            <button className="flex items-center justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5 mr-6 ml-8">
-                                <FaComment className="mr-2" />
-                                Message
-                            </button>
+                            {patient._id === user._id ? (
+                                <button className="flex items-center justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5 mr-6 ml-8">
+                                    <FaComment className="mr-2" />
+                                    Message
+                                </button>) :
+                                (
+                                    <div className="flex flex-col text-center">
+                                        <Link
+                                            to={`/patient/${id}/edit`}
+                                            className="flex items-center justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5 mr-6 ml-8"
+                                        >
+                                            <FaUserEdit className="mr-2" />
+                                            Edit Profile
+                                        </Link>
+                                    </div>
+                                )
+                            }
 
                         </div>
                         <div className="mr-10 ml-10">

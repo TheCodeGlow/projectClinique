@@ -9,9 +9,23 @@ const doctorSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  bio: {
+    type: String,
+    default: "No bio available."
+  },
   specialty: {
     type: String,
-    required: true
+    required: true,
+    default: "General Practitioner"
+  },
+  profilePicture: {
+    type: String,
+    required: true,
+    default: "doctor.jpg"
+  },
+  degree: {
+    type: String,
+    default: "MD"
   },
   appointments: [{
     type: mongoose.Schema.Types.ObjectId,

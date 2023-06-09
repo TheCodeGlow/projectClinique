@@ -74,4 +74,43 @@ router.delete('/:id', passportJwt, async (req, res, next) => {
   }
 });
 
+// Approve an appointment
+router.put('/:id/approve', passportJwt, async (req, res, next) => {
+  try {
+    // Find the appointment by ID
+    const appointment = await Appointment.findById(req.params.id);
+    if (!appointment) {
+      return res.status(404).json({ error: 'Appointment not found' });
+    }
+
+    // Update the appointment status
+    appointment.status = 'accepted';
+    await appointment.save();
+
+    res.json(appointment);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Reject an appointment
+router.put('/:id/reject', passportJwt, async (req, res, next) => {
+  try {
+    // Find the appointment by ID
+    const appointment = await Appointment.findById(req.params.id);
+    if (!appointment) {
+      return res.status(404).json({ error: 'Appointment not found' });
+    }
+
+    // Update the appointment status
+    appointment.status = 'rejected';
+    await appointment.save();
+
+    res.json(appointment);
+  } catch (err) {
+    next(err);
+  }
+});
+
+
 module.exports = router;

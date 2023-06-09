@@ -11,7 +11,7 @@ const useDoctors = () => {
     );
     let doctors = data;
     // Return the data, error and loading state
-    return { doctors , error, isLoading, isError };
+    return { doctors, error, isLoading, isError };
 
 };
 
@@ -54,7 +54,14 @@ const useUpdateDoctor = (id) => {
     // Use the useMutation hook to perform the PUT request to the /doctors/{id} endpoint
     const { mutate, isLoading, isError, error } = useMutation(
         (updatedDoctor) =>
-            axios.put(API_URL + `/api/doctors/${id}`, updatedDoctor).then((res) => res.data),
+            axios.put(API_URL + `/api/doctors/${id}`,
+                updatedDoctor,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                        Authorization: `Bearer ${localStorage.getItem("token")}`
+                    },
+                }),
         {
             // On success, invalidate the doctor query to refetch the updated data
             onSuccess: () => {

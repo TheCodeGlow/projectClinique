@@ -19,12 +19,11 @@ import "../styles/DoctorProfile.css"
 
 
 // TODO LIST:
-// 1. Complete the Edit Page for doctor
-// 2. add doctor rewiews
-// 3. add doctor rating
-// 4. add message functionality
-
-
+// DONE 1. Complete the Edit Page for doctor
+// TODO 2. add doctor rewiews
+// TODO 3. add doctor rating
+// TODO 4. add message functionality
+// TODO 5. add prescription page that contains all info about the prescription as well as update/delete functionality
 
 const DoctorProfile = () => {
     const { id } = useParams();
@@ -174,7 +173,7 @@ const DoctorProfile = () => {
             {/* doctor info section */}
             {(!isLoading && doctor && user) ? (
                 <section className="flex flex-col border p-20 col-span-2 ">
-                    <img src="https://img.freepik.com/free-photo/beautiful-young-female-doctor-looking-camera-office_1301-7807.jpg?w=360&t=st=1685717267~exp=1685717867~hmac=bcf4622d73ae2e5fc454842d100ae874e44c5416cb88a524ab2eef80bcc7a1f5" alt="Doctor"
+                    <img src={process.env.PUBLIC_URL + '/uploads/' + doctor.profilePicture} alt="Doctor"
                         className="rounded-full w-80 h-80 mx-auto mb-5 object-cover border-2 border-gray-300"
                     />
                     <div>
@@ -183,11 +182,7 @@ const DoctorProfile = () => {
                         </h2>
                         <h3 className="text-xl text-gray-600 font-semibold text-center">{doctor?.specialty}</h3>
                         <p className="text-gray-500 font-semibold text-center mt-6">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vitae
-                            tristique mauris. Sed auctor sagittis fringilla. Fusce elementum
-                            rhoncus justo ac pulvinar. Suspendisse potenti. Vestibulum ante
-                            ipsum primis in faucibus orci luctus et ultrices posuere cubilia
-                            Curae; Nullam mattis ligula vel turpis finibus ultrices.
+                            {doctor?.bio}
                         </p>
 
                     </div>
@@ -266,7 +261,7 @@ const DoctorProfile = () => {
                         <ul className="">
                             {filteredPatients?.map((patient) => (<li key={patient._id} className="flex items-center bg-white p-6 space-5 border hover:bg-gray-50 transition-colors duration-200 cursor-pointer">
                                 <div>
-                                    <img src="https://img.freepik.com/free-photo/beautiful-young-female-doctor-looking-camera-office_1301-7807.jpg?w=360&t=st=1685717267~exp=1685717867~hmac=bcf4622d73ae2e5fc454842d100ae874e44c5416cb88a524ab2eef80bcc7a1f5" alt="Patient" className="w-10 h-10 mr-5 border rounded-full object-cover" />
+                                    <img src={process.env.PUBLIC_URL + '/uploads/' + patient.profilePicture} alt="Patient" className="w-10 h-10 mr-5 border rounded-full object-cover" />
                                 </div>
                                 <div>
                                     <h3 className="text-lg text-gray-800">

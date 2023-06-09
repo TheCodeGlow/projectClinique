@@ -70,14 +70,14 @@ const DoctorPage = () => {
                                     <div className="doctor-image">
                                         <div className="doctor-status available"></div>
                                         <img
-                                            src="https://img.freepik.com/free-photo/attractive-young-male-nutriologist-lab-coat-smiling-against-white-background_662251-2960.jpg?w=2000"
+                                            src={process.env.PUBLIC_URL + '/uploads/' + doctor.profilePicture}
                                             alt="doctor"
                                             height="100"
                                             width="100"
                                         />
                                     </div>
                                     <div className="name-specialty">
-                                        <h3 className="Name">{`${doctor.firstName} ${doctor.lastName}`}</h3>
+                                        <h3 className="Name">{`Dr.${doctor.firstName} ${doctor.lastName}`}</h3>
                                         <label className="specialty">{doctor.specialty}</label>
                                     </div>
                                 </div>

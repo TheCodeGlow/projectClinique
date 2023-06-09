@@ -7,11 +7,22 @@ const API_URL = "http://localhost:5000";
 const usePatients = () => {
   // Use useQuery to fetch the patients data from /api/patients
   const { data, error, isLoading } = useQuery("patients", () =>
-    axios.get(API_URL+"/api/patients").then((res) => res.data)
+    axios.get(API_URL + "/api/patients").then((res) => res.data)
   );
 
   // Return the patients data, error and loading state
   return { patients: data, error, isLoading };
+};
+
+// Define a custom hook that returns a single patient
+const usePatient = (id) => {
+  // Use useQuery to fetch the patient with the given id from /api/patients/{id}
+  const { data, error, isLoading } = useQuery(["patient", id], () =>
+    axios.get(API_URL + "/api/patients/" + id).then((res) => res.data)
+  );
+
+  // Return the patient data, error and loading state
+  return { patient: data, error, isLoading };
 };
 
 // Define a custom hook that returns a create patient mutation function
@@ -22,7 +33,15 @@ const useCreatePatient = () => {
   // Use useMutation to create a createPatient function that sends the patient data to /api/patients
   const { mutate, data, error, isLoading } = useMutation(
     (patientData) =>
-      axios.post(API_URL+"/api/patients", patientData).then((res) => res.data),
+      axios.post(API_URL + "/api/patients",
+        patientData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          },
+        }
+      ).then((res) => res.data),
     {
       // On success, invalidate the patients query to refetch the updated list
       onSuccess: (data) => {
@@ -32,28 +51,35 @@ const useCreatePatient = () => {
   );
 
   // Return the createPatient function, data, error and loading state
-  return { createPatient: mutate, data, error, isLoading };
+  return { mutate, data, error, isLoading };
 };
 
 // Define a custom hook that returns an update patient mutation function
-const useUpdatePatient = () => {
+const useUpdatePatient = (id) => {
   // Get the query client instance
   const queryClient = useQueryClient();
 
-  // Use useMutation to create an updatePatient function that sends the patient data and id to /api/patients/{id}
-  const { mutate, data, error, isLoading } = useMutation(
-    ({ patientData, id }) =>
-      axios.put(API_URL+`/api/patients/${id}`, patientData).then((res) => res.data),
+  // Use the useMutation hook to perform the PUT request to the /doctors/{id} endpoint
+  const { mutate, isLoading, isError, error } = useMutation(
+    (updatedPatient) =>
+      axios.put(API_URL + `/api/patients/${id}`,
+      updatedPatient,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          },
+        }),
     {
-      // On success, invalidate the patients query to refetch the updated list
-      onSuccess: (data) => {
-        queryClient.invalidateQueries("patients");
+      // On success, invalidate the doctor query to refetch the updated data
+      onSuccess: () => {
+        queryClient.invalidateQueries(["patient", id]);
       },
     }
   );
 
-  // Return the updatePatient function, data, error and loading state
-  return { updatePatient: mutate, data, error, isLoading };
+  // Return the mutate function and the loading and error state
+  return { mutate, isLoading, isError, error };
 };
 
 // Define a custom hook that returns a delete patient mutation function
@@ -63,7 +89,7 @@ const useDeletePatient = () => {
 
   // Use useMutation to create a deletePatient function that sends the id to /api/patients/{id}
   const { mutate, data, error, isLoading } = useMutation(
-    (id) => axios.delete(API_URL+`/api/patients/${id}`).then((res) => res.data),
+    (id) => axios.delete(API_URL + `/api/patients/${id}`).then((res) => res.data),
     {
       // On success, invalidate the patients query to refetch the updated list
       onSuccess: (data) => {
@@ -77,8 +103,9 @@ const useDeletePatient = () => {
 };
 
 export {
-    usePatients,
-    useCreatePatient,
-    useUpdatePatient,
-    useDeletePatient
+  usePatients,
+  usePatient,
+  useCreatePatient,
+  useUpdatePatient,
+  useDeletePatient
 }

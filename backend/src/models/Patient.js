@@ -9,6 +9,11 @@ const patientSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  profilePicture : {
+    type: String,
+    required: true,
+    default: "patient.jpg"
+  },
   dateOfBirth: {
     type: Date,
     required: true
@@ -25,6 +30,16 @@ const patientSchema = new mongoose.Schema({
   address: {
     type: String,
     required: true
+  },
+  weight: {
+    type: Number,
+    required: true,
+    default: 60 
+  },
+  height: {
+    type: Number,
+    required: true,
+    default: 170,
   },
   appointments: [{
     type: mongoose.Schema.Types.ObjectId,

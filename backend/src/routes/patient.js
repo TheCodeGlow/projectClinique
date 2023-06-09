@@ -2,9 +2,23 @@ const express = require('express');
 const router = express.Router();
 const Patient = require('../models/Patient');
 const passportJwt = require('../config/passport');
+const multer = require('multer');
+const path = require('path');
 
-// TODO: Do the same for patients
-// Get list of patients for a specific doctor
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, path.join(__dirname, '../../../client/public/uploads'));
+    },
+    filename: function (req, file, cb) {
+        console.log("file.originalname " + file.originalname);
+        cb(null, Date.now() + '-' + file.originalname);
+    },
+});
+
+const upload = multer({ storage: storage });
+
+
+
 router.get('/patients', passportJwt, async (req, res, next) => {
     try {
         const doctorId = req.query.doctorId;
@@ -17,25 +31,40 @@ router.get('/patients', passportJwt, async (req, res, next) => {
             // if no doctorId is provided, return all patients
             patients = await Patient.find();
         }
-
         res.json(patients);
     } catch (err) {
         next(err);
     }
 });
 
-// Create a new patient
-router.post('/patients', passportJwt, async (req, res, next) => {
+// Get a specific patient by their ID
+router.get('/patients/:id', passportJwt, async (req, res, next) => {
     try {
-        const { firstName, lastName, dateOfBirth, gender, phone, address } = req.body;
+        const patient = await Patient.findById(req.params.id);
+        if (!patient) {
+            return res.status(404).json({ error: 'Patient not found' });
+        }
+
+        res.json(patient);
+    } catch (err) {
+        next(err);
+    }
+});
+
+// Create a new patient
+router.post('/patients', upload.single("profilePicture"), passportJwt, async (req, res, next) => {
+    try {
+        console.log("req.body " + JSON.stringify(req.body));
+        const { firstName, lastName, dateOfBirth, gender, phone, address, weight, height } = req.body;
+        const profilePicture = req.file ? req.file.filename : null;
 
         // Check if all fields are provided
-        if (!firstName || !lastName || !dateOfBirth || !phone  || !gender || !address) {
+        if (!firstName || !lastName || !dateOfBirth || !phone || !gender || !address || !weight || !height) {
             return res.status(400).json({ error: 'All fields are required' });
         }
 
         // Create a new patient
-        const patient = new Patient({ firstName, lastName, dateOfBirth, gender, phone, address });
+        const patient = new Patient({ firstName, lastName, dateOfBirth, gender, phone, address, weight, height, profilePicture });
         await patient.save();
 
         res.status(201).json(patient);
@@ -45,21 +74,28 @@ router.post('/patients', passportJwt, async (req, res, next) => {
 });
 
 // Update an existing patient by their ID
-router.put('/patients/:id', passportJwt, async (req, res, next) => {
+router.put('/patients/:id', upload.single("profilePicture"), passportJwt, async (req, res, next) => {
     try {
-        const { name, age, gender, address } = req.body;
+        console.log("req.body " + JSON.stringify(req.body));
+        const { firstName, lastName, dateOfBirth, gender, phone, address, weight, height } = req.body;
+        const profilePicture = req.file ? req.file.filename : null;
 
         // Check if all fields are provided
-        if (!name || !age || !gender || !address) {
+        if (!firstName || !lastName || !dateOfBirth || !gender || !address || !phone || !weight || !height ) {
             return res.status(400).json({ error: 'All fields are required' });
         }
+        const updatedPatient = { firstName, lastName, dateOfBirth, gender, phone, address, weight, height }
+        if (profilePicture) {
+            updatedPatient.profilePicture = profilePicture;
+        }
 
-        const patient = await Patient.findByIdAndUpdate(req.params.id, { name, age, gender, address }, { new: true });
+        const patient = await Patient.findByIdAndUpdate(req.params.id, updatedPatient, { new: true });
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
         }
 
         res.json(patient);
+    
     } catch (err) {
         next(err);
     }
