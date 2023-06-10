@@ -149,48 +149,27 @@ const DoctorAppointment = ({ idPatient, idDoctor }) => {
             dispatch({ type: 'SET_ERRORS', payload: 'Please fill all the fields' });
             return;
         }
+
         const date = new Date();
         const currentYear = date.getFullYear();
-        let month = selectedMonth;
-        let day = selectedDay;
-        // check if month or day is less than 10 and add 0 before but if it's 9 the endtime will be 10
-        if (selectedMonth < 10) {
-            month = '0' + selectedMonth;
-        }
-        if (selectedDay < 10) {
-            day = '0' + selectedDay;
-        }
+        const month = selectedMonth < 10 ? '0' + selectedMonth : selectedMonth;
+        const day = selectedDay < 10 ? '0' + selectedDay : selectedDay;
+        const startTimeSlot = selectedTimeSlot - 1;
+        const endTimeSlot = selectedTimeSlot < 9 ? selectedTimeSlot + 1 : 10;
 
-        const startDate =
-            currentYear +
-            '-' +
-            month +
-            '-' +
-            day +
-            'T' +
-            (selectedTimeSlot - 1) +
-            ':00:00.000Z';
-        const endDate =
-            currentYear +
-            '-' +
-            month +
-            '-' +
-            day +
-            'T' +
-            selectedTimeSlot +
-            ':00:00.000Z';
-        const startTime = new Date(startDate);
-        const endTime = new Date(endDate);
+        const startDate = new Date(Date.UTC(currentYear, month - 1, day, startTimeSlot));
+        const endDate = new Date(Date.UTC(currentYear, month - 1, day, endTimeSlot));
         const appointment = {
             doctor: idDoctor,
             patient: idPatient,
-            startTime: startTime,
-            endTime: endTime,
+            startTime: startDate,
+            endTime: endDate,
             details: appointmentDetails,
         };
-        
         createAppointmentMutation.mutate(appointment);
     };
+
+
 
     return (
         <div className="flex flex-col items-center mt-10 w-50">
@@ -206,7 +185,7 @@ const DoctorAppointment = ({ idPatient, idDoctor }) => {
                     <option value="" className='font-bold text-center'>-- Month --</option>
                     {months.map((month) => (
                         <option key={month.value} value={month.value} className='font-bold'>
-                         - {month.label} -
+                            - {month.label} -
                         </option>
                     ))}
                 </select>

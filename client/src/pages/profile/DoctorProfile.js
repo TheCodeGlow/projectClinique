@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import { usePatients } from '../../hooks/usePatients';
 import { useAppointments } from '../../hooks/useAppointments';
-import { usePatientPrescriptions } from '../../hooks/usePrescriptions';
+import { useAverageDoctorRating, useFeedbackById } from '../../hooks/useFeedback';
 import { useDoctor } from '../../hooks/useDoctors';
 
 //import components
@@ -14,111 +14,120 @@ import {
     TextField,
 } from '@material-ui/core';
 import { Table, TableHead, TableBody, TableRow, TableCell } from '@material-ui/core';
-import { FaUserEdit, FaComment, FaArrowRight } from 'react-icons/fa';
+import { FaUserEdit, FaComment, FaStar, FaStarHalfAlt } from 'react-icons/fa';
 import "../styles/DoctorProfile.css"
 
 import { getOrCreateChat } from 'react-chat-engine';
-
-
-// TODO LIST:
-// DONE 1. Complete the Edit Page for doctor
-// TODO 2. add doctor rewiews
-// TODO 3. add doctor rating
-// TODO 4. add message functionality
-// TODO 5. add prescription page that contains all info about the prescription as well as update/delete functionality
 
 const DoctorProfile = () => {
     const { id } = useParams();
     const { user } = useAuth();
     const { patients } = usePatients();
     const { appointments } = useAppointments();
-    const { prescriptions } = usePatientPrescriptions(id);
     const { doctor, isLoading } = useDoctor(id);
 
-    // Booking appointment section logic
     const [patient, setPatient] = useState('');
+    const [appointmentList, setAppointmentList] = useState([]);
+    const [searchAppointment, setSearchAppointment] = useState('');
+    const [filteredAppointments, setFilteredAppointments] = useState(null);
+    const [feedbackList, setFeedbackList] = useState([]);
+    const [searchFeedback, setSearchFeedback] = useState('');
+    const [filteredFeedbacks, setFilteredFeedbacks] = useState(null);
+
+    // Doctor rating section logic
+    const { data: averageRating, isLoading: ratingLoading } = useAverageDoctorRating(id);
+
+    // Doctor reviews section logic
+    const { data: feedbacks, isLoading: feedbackLoading } = useFeedbackById(id);
+
+    useEffect(() => {
+        if (feedbacks && patients && user) {
+            const FeedbackWithPatient = feedbacks.map(feedback => {
+                const patient = patients.find(patient => {
+                    console.log("patient._id", patient._id);
+                    console.log("feedback.patient", feedback.patient);
+                    console.log("test: ", patient._id === feedback.patient);
+                    return patient._id === feedback.patient
+                });
+                if (patient) {
+                    return { ...feedback, patient: patient };
+                }
+                return feedback;
+            });
+
+            !user.isDoctor ?
+                setFeedbackList(FeedbackWithPatient.filter(feedback => feedback.patient._id === user.patient)) :
+                setFeedbackList(FeedbackWithPatient);
+        }
+    }, [feedbacks, patients, user]);
+
+    useEffect(() => {
+        if (feedbackList && searchFeedback) {
+            setFilteredFeedbacks(
+                feedbackList.filter((feedback) =>
+                    feedback.patient.firstName
+                        .toLowerCase()
+                        .includes(searchFeedback.toLowerCase())
+                )
+            );
+        } else {
+            setFilteredFeedbacks(feedbackList);
+        }
+    }, [searchFeedback, feedbackList, patients]);
+
+
+    // Booking appointment section logic
     useEffect(() => {
         if (user && !user.isDoctor && patients) {
             const currentPatient = patients.find(patient => patient._id === user.patient);
             setPatient(currentPatient);
         }
     }, [user, patients]);
-    // patient list section logic
-    const [patientList, setPatientList] = useState([]);
-    const [search, setSearch] = useState('');
-    const [filteredPatients, setFilteredPatients] = useState([]);
-
-    useEffect(() => {
-        if (patients && appointments && doctor) {
-            // get all patients that have an appointment with the doctor
-            const patientIds = appointments
-                .filter((appointment) => appointment.doctor === doctor._id)
-                .map((appointment) => appointment.patient);
-            // get all patients that have an appointment with the doctor
-            const patientList = patients.filter((patient) =>
-                patientIds.includes(patient._id)
-            );
-            setPatientList(patientList);
-        }
-    }, [patients, appointments, doctor]);
-
-    useEffect(() => {
-        if (patientList && search && patients) {
-            setFilteredPatients(
-                patientList.filter((patient) =>
-                    patient.firstName.toLowerCase().includes(search.toLowerCase())
-                )
-            );
-        } else {
-            setFilteredPatients(patientList);
-        }
-    }, [search, patientList, patients]);
 
     // appointment list section logic
-    const [appointmentList, setAppointmentList] = useState([]);
-    const [searchAppointment, setSearchAppointment] = useState('');
-    const [filteredAppointments, setFilteredAppointments] = useState(null);
-
     useEffect(() => {
         if (appointments && doctor && patients && user) {
-            // get all appointments that have the doctor
-            const appointmentList = appointments.filter((appointment) =>
-                appointment.doctor === doctor._id
-            );
+            // Get all appointments that have the doctor
+            const appointmentList = appointments.filter(appointment => appointment.doctor === doctor._id);
 
-
-            // add patient info to each appointment
-            appointmentList.forEach((appointment) => {
-                const patient = patients.find(
-                    (patient) => patient._id === appointment.patient
-                );
-                if (patient) { appointment.patient = patient._id; }
-
+            // Add patient info to each appointment
+            const updatedAppointments = appointmentList.map(appointment => {
+                const patient = patients.find(patient => patient._id === appointment.patient);
+                if (patient) {
+                    return { ...appointment, patient: patient };
+                }
+                return appointment;
             });
-            // filter today's appointments
+
+            // Filter today's appointments
             const today = new Date();
-            const todayAppointments = appointmentList.filter(
-                (appointment) =>
-                    new Date(appointment.startTime).getDate() === today.getDate() &&
-                    new Date(appointment.startTime).getMonth() === today.getMonth() &&
-                    new Date(appointment.startTime).getFullYear() === today.getFullYear()
-            );
-            // add time and date to each appointment
-            todayAppointments.forEach((appointment) => {
+            const todayAppointments = updatedAppointments.filter(appointment => {
+                const startTime = new Date(appointment.startTime);
+                return (
+                    startTime.getDate() === today.getDate() &&
+                    startTime.getMonth() === today.getMonth() &&
+                    startTime.getFullYear() === today.getFullYear()
+                );
+            });
+
+            // Add time and date to each appointment
+            todayAppointments.forEach(appointment => {
                 const startTime = new Date(appointment.startTime);
                 const endTime = new Date(appointment.endTime);
-                appointment.time = `${startTime.getHours()}:${startTime.getMinutes()}-${endTime.getHours()}:${endTime.getMinutes()}`;
+                const formatTime = (time) => time.toString().padStart(2, '0');
+                appointment.time = `${formatTime(startTime.getHours())}:${formatTime(startTime.getMinutes())}-${formatTime(endTime.getHours())}:${formatTime(endTime.getMinutes())}`;
                 appointment.date = `${startTime.getDate()}/${startTime.getMonth()}/${startTime.getFullYear()}`;
             });
-            // if the user is a patient, filter only his appointments
-            if (user && !user.isDoctor) {
-                const patientAppointments = todayAppointments.filter(
-                    (appointment) => appointment.patient._id === user._id
-                );
-                setAppointmentList(patientAppointments);
-            } else setAppointmentList(todayAppointments);
+
+            // Filter appointments based on user type
+            const filteredAppointments = user && !user.isDoctor
+                ? todayAppointments.filter(appointment => appointment.patient._id === user.patient)
+                : todayAppointments;
+
+            setAppointmentList(filteredAppointments);
         }
     }, [appointments, doctor, patients, user]);
+
 
     useEffect(() => {
         if (appointmentList && searchAppointment && patients) {
@@ -134,51 +143,20 @@ const DoctorProfile = () => {
         }
     }, [searchAppointment, appointmentList, patients]);
 
-    // prescription list section
-    const [prescriptionList, setPrescriptionList] = useState([]);
-    const [searchPrescription, setSearchPrescription] = useState('');
-    const [filteredPrescriptions, setFilteredPrescriptions] = useState([]);
-
-    useEffect(() => {
-        if (prescriptions) {
-            setPrescriptionList(prescriptions);
-        }
-    }, [prescriptions]);
-
-    useEffect(() => {
-        if (prescriptionList && searchPrescription && patients) {
-            setFilteredPrescriptions(
-                prescriptionList.filter((prescription) =>
-                    prescription.patient.firstName
-                        .toLowerCase()
-                        .includes(searchPrescription.toLowerCase())
-                )
-            );
-        } else {
-            setFilteredPrescriptions(prescriptionList);
-        }
-    }, [searchPrescription, prescriptionList, patients]);
-
     const handleMessage = () => {
-        try {
-            getOrCreateChat(
-                {
-                    userName: patient.firstName + " " + patient.lastName,
-                    userSecret: user.password,
-                    email: user.email,
-                    projectID: "05e8fe9c-bf36-496a-bf00-1c5bfd1daa81",
-                },
-                {
-                    is_direct_chat: true,
-                    usernames: [doctor.firstName + " " + doctor.lastName, patient.firstName + " " + patient.lastName],
-                },
-            );
-        } catch (err) {
-            console.log(err.message);
-        }
+        getOrCreateChat({
+            userName: patient.firstName + " " + patient.lastName,
+            userSecret: user.password,
+            email: user.email,
+            projectID: "05e8fe9c-bf36-496a-bf00-1c5bfd1daa81",
+        },
+            {
+                is_direct_chat: true,
+                usernames: [doctor.firstName + " " + doctor.lastName, patient.firstName + " " + patient.lastName],
+            },);
+
     }
-
-
+    console.log("doctor", filteredFeedbacks);
     if (isLoading) return (
         //loading
         <div className="flex justify-center items-center h-screen">
@@ -189,7 +167,7 @@ const DoctorProfile = () => {
     return (
         <main className='grid grid-cols-2 shadow-lg shadow-blue rounded-lg m-40' >
             {/* doctor info section */}
-            {(!isLoading && doctor && user) ? (
+            {(!isLoading && doctor && user && !ratingLoading) ? (
                 <section className="flex flex-col border p-20 col-span-2 ">
                     <img src={process.env.PUBLIC_URL + '/uploads/' + doctor.profilePicture} alt="Doctor"
                         className="rounded-full w-80 h-80 mx-auto mb-5 object-cover border-2 border-gray-300"
@@ -199,6 +177,20 @@ const DoctorProfile = () => {
                             Dr.{doctor?.firstName} {doctor?.lastName}
                         </h2>
                         <h3 className="text-xl text-gray-600 font-semibold text-center">{doctor?.specialty}</h3>
+                        <div className="flex justify-center items-center mt-5">
+                            {/* represent doctor rating in stars */}
+                            <div className="flex items-center">
+                                {Array.from({ length: Math.floor(averageRating) }).map((_, index) => (
+                                    <FaStar key={index} className="text-yellow-400 text-2xl" />
+                                ))}
+                                {averageRating % 1 !== 0 && (
+                                    <FaStarHalfAlt className="text-yellow-400 text-2xl" />
+                                )}
+                                <p className="text-gray-500 text-xl font-semibold ml-2">
+                                    {averageRating?.toFixed(1)}
+                                </p>
+                            </div>
+                        </div>
                         <p className="text-gray-500 font-semibold text-center mt-6">
                             {doctor?.bio}
                         </p>
@@ -228,162 +220,166 @@ const DoctorProfile = () => {
                         <h1 className="text-3xl font-bold text-gray-800">Loading...</h1>
                     </div>
                 </section>
-            )}
+            )
+            }
 
             {/* Booking appointment section */}
-            {(!isLoading && doctor && patients && user) ? (
-                <section className="flex flex-col bg-white border p-20 col-span-2 ">
-                    <h2 className="text-2xl font-bold text-gray-500 text-center">
-                        Book an Appointment
-                    </h2>
-                    {/* if user is owner of profile add dropdown containnng patients */}
-                    {user.doctor === id && (
-                        <div className="flex flex-col items-center  justify-center mt-5">
-                            <label htmlFor="patient" className="mr-2 text-xl text-gray-600">
-                                Select Patient
-                            </label>
-                            <select
-                                name="patient"
-                                id="patient"
-                                value={patient}
-                                onChange={(e) => setPatient(e.target.value)}
-                                className="px-2 py-1 border rounded text-center font-bold focus:outline-none focus:ring focus:border-blue-300"
-                            >
-                                <option value="">Select Patient</option>
-                                {patients?.map((patient) => (
-                                    <option key={patient._id} value={patient} className='font-bold text-start'>
-                                        - {patient.firstName} {patient.lastName}
-                                    </option>
-                                ))}
-                            </select>
+            {
+                (!isLoading && doctor && patients && user) ? (
+                    <section className="flex flex-col bg-white border p-20 col-span-2 ">
+                        <h2 className="text-2xl font-bold text-gray-500 text-center">
+                            Book an Appointment
+                        </h2>
+                        {/* if user is owner of profile add dropdown containnng patients */}
+                        {user.doctor === id && (
+                            <div className="flex flex-col items-center  justify-center mt-5">
+                                <label htmlFor="patient" className="mr-2 text-xl text-gray-600">
+                                    Select Patient
+                                </label>
+                                <select
+                                    name="patient"
+                                    id="patient"
+                                    value={patient}
+                                    onChange={(e) => setPatient(e.target.value)}
+                                    className="px-2 py-1 border rounded text-center font-bold focus:outline-none focus:ring focus:border-blue-300"
+                                >
+                                    <option value="">Select Patient</option>
+                                    {patients?.map((patient) => (
+                                        <option key={patient._id} value={patient} className='font-bold text-start'>
+                                            - {patient.firstName} {patient.lastName}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
+                        <div className="flex flex-col items-center mt-5 border p-5 rounded-lg overflow-x-hidden">
+                            <DoctorAppointment idPatient={patient._id} idDoctor={id} />
                         </div>
-                    )}
-                    <div className="flex flex-col items-center mt-5 border p-5 rounded-lg overflow-x-hidden">
-                        <DoctorAppointment idPatient={patient._id} idDoctor={id} />
-                    </div>
-                </section>
-            ) : (
-                <section className="flex flex-col bg-white border p-20 col-span-2 ">
-                    <div className="flex justify-center items-center h-screen">
-                        <h1 className="text-3xl font-bold text-gray-800">Loading...</h1>
-                    </div>
-                </section>
-            )}
-
-            {/* patient list section */}
-            {(!isLoading && doctor && patients) ? (
-                <section className="flex flex-col bg-white border p-20 ">
-                    <h2 className="text-2xl font-bold text-center text-gray-500 mb-5">
-                        Patients
-                    </h2>
-                    <div className="flex flex-col overflow-y-auto h-80 ">
-                        <TextField label="Search" value={search} onChange={(e) => setSearch(e.target.value)} className=" bg-white border w-full md:w-auto" />
-                        <ul className="">
-                            {filteredPatients?.map((patient) => (<li key={patient._id} className="flex items-center bg-white p-6 space-5 border hover:bg-gray-50 transition-colors duration-200 cursor-pointer">
-                                <div>
-                                    <img src={process.env.PUBLIC_URL + '/uploads/' + patient.profilePicture} alt="Patient" className="w-10 h-10 mr-5 border rounded-full object-cover" />
-                                </div>
-                                <div>
-                                    <h3 className="text-lg text-gray-800">
-                                        {patient.firstName} {patient.lastName}
-                                    </h3>
-                                </div>
-                                <Link to={`/patient/${patient._id}`} className="ml-auto">
-                                    <FaArrowRight className="text-gray-500" />
-                                </Link>
-                            </li>))}
-                        </ul>
-                    </div>
-                </section>
-            ) : (
-                <section className="flex flex-col bg-white border p-20 ">
-                    <div className="flex justify-center items-center h-screen">
-                        <h1 className="text-3xl font-bold text-gray-800">Loading...</h1>
-                    </div>
-                </section>
-            )}
-            {/* prescription list section */}
-            {(!isLoading && doctor && patients) ? (
-                <section className="flex flex-col overflow-hidden space-x-4 bg-white border p-20 overflow-y-auto">
-                    <h2 className="text-2xl font-bold text-center text-gray-500 mb-5">
-                        Prescriptions
-                    </h2>
-                    <div className="flex flex-col overflow-y-auto h-80 ">
-                        <TextField label="Search" value={searchPrescription} onChange={(e) => setSearchPrescription(e.target.value)} className=" bg-white border w-full md:w-auto" />
-                        <ul className="">
-                            {filteredPrescriptions?.map((prescription) => (<li key={prescription._id} className="flex items-center bg-white p-6 space-5 border hover:bg-gray-50 transition-colors duration-200 cursor-pointer">
-                                <div>
-
-                                    <img src={prescription.patient.image} alt="Patient" className="w-10 h-10 border rounded-full object-cover" />
-                                </div>
-                                <div>
-                                    <h3 className="text-lg text-gray-800">
-                                        {prescription.patient.firstName} {prescription.patient.lastName}
-                                    </h3>
-                                </div>
-                            </li>))}
-                        </ul>
-                    </div>
-                </section>
-            ) : (
-                <section className="flex flex-col overflow-hidden space-x-4 bg-white border p-20 overflow-y-auto">
-                    <div className="flex justify-center items-center h-screen">
-                        <h1 className="text-3xl font-bold text-gray-800">Loading...</h1>
-                    </div>
-                </section>
-            )}
+                    </section>
+                ) : (
+                    <section className="flex flex-col bg-white border p-20 col-span-2 ">
+                        <div className="flex justify-center items-center h-screen">
+                            <h1 className="text-3xl font-bold text-gray-800">Loading...</h1>
+                        </div>
+                    </section>
+                )
+            }
 
             {/* appointment list section */}
-            {(!isLoading && doctor && appointments && patients && filteredAppointments) ? (
-                <section className="flex flex-col space-x-4 bg-white p-5 col-span-2 border overflow-y-auto ">
-                    <h2 className="text-2xl font-bold text-center text-gray-500 mb-5">
-                        Today's appointments
-                    </h2>
-                    <div className="flex flex-col overflow-y-auto h-80 ">
-                        <TextField label="Search" value={searchAppointment} onChange={(e) => setSearchAppointment(e.target.value)} className=" bg-white border w-full md:w-auto" />
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell className="text-gray-400 text-xl font-bold">Name</TableCell>
-                                    <TableCell className="text-gray-400 text-xl font-bold">Date</TableCell>
-                                    <TableCell className="text-gray-400 text-xl font-bold">Time</TableCell>
-                                    <TableCell className="text-gray-400 text-xl font-bold">Details</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {filteredAppointments.length === 0 ? (
+            {
+                (!isLoading && doctor && appointments && patients && filteredAppointments) ? (
+                    <section className="flex flex-col space-x-4 bg-white p-5 col-span-2 border overflow-y-auto ">
+                        <h2 className="text-2xl font-bold text-center text-gray-500 mb-5">
+                            Today's appointments
+                        </h2>
+                        <div className="flex flex-col overflow-y-auto h-80 ">
+                            <TextField label="Search" value={searchAppointment} onChange={(e) => setSearchAppointment(e.target.value)} className=" bg-white border w-full md:w-auto" />
+                            <Table>
+                                <TableHead>
                                     <TableRow>
-                                        <TableCell colSpan={4} className="text-gray-500 text-xl font-bold">
-                                            No appointments found
-                                        </TableCell>
+                                        <TableCell className="text-gray-400 text-xl font-bold">Name</TableCell>
+                                        <TableCell className="text-gray-400 text-xl font-bold">Date</TableCell>
+                                        <TableCell className="text-gray-400 text-xl font-bold">Time</TableCell>
+                                        <TableCell className="text-gray-400 text-xl font-bold">Details</TableCell>
                                     </TableRow>
-                                ) : (
-                                    filteredAppointments.map((appointment) => (
-                                        appointment.patient ? (
-                                            <TableRow key={appointment._id} className="text-gray-500 text-xl font-bold">
-                                                <TableCell>
-                                                    {appointment.patient.firstName + " " + appointment.patient.lastName}
-                                                </TableCell>
-                                                <TableCell>{appointment.date}</TableCell>
-                                                <TableCell>{appointment.time}</TableCell>
-                                                <TableCell>{appointment.details}</TableCell>
-                                            </TableRow>
-                                        ) : null
-                                    ))
-                                )}
-
-                            </TableBody>
-                        </Table>
-                    </div>
-                </section>
-            ) : (
-                <section className="flex flex-col space-x-4 bg-white p-5 col-span-2 border overflow-y-auto ">
-                    <div className="flex justify-center items-center h-screen">
-                        <h1 className="text-3xl font-bold text-gray-800">Loading...</h1>
-                    </div>
-                </section>
-            )}
-        </main>
+                                </TableHead>
+                                <TableBody>
+                                    {filteredAppointments.length === 0 ? (
+                                        <TableRow>
+                                            <TableCell colSpan={4} className="text-gray-500 text-xl font-bold">
+                                                No appointments found
+                                            </TableCell>
+                                        </TableRow>
+                                    ) : (
+                                        filteredAppointments.map((appointment) => (
+                                            appointment.patient ? (
+                                                <TableRow key={appointment._id} className="text-gray-500 text-xl font-bold">
+                                                    <TableCell>
+                                                        {appointment.patient.firstName + " " + appointment.patient.lastName}
+                                                    </TableCell>
+                                                    <TableCell>{appointment.date}</TableCell>
+                                                    <TableCell>{appointment.time}</TableCell>
+                                                    <TableCell>{appointment.details}</TableCell>
+                                                </TableRow>
+                                            ) : null
+                                        ))
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </div>
+                    </section>
+                ) : (
+                    <section className="flex flex-col space-x-4 bg-white p-5 col-span-2 border overflow-y-auto ">
+                        <div className="flex justify-center items-center h-screen">
+                            <h1 className="text-3xl font-bold text-gray-800">Loading...</h1>
+                        </div>
+                    </section>
+                )
+            }
+            {/* doctor reviews section */}
+            {
+                (!isLoading && doctor && feedbacks && patients && filteredFeedbacks) ? (
+                    <section className="flex flex-col space-x-4 bg-white p-5 col-span-2 border overflow-y-auto ">
+                        <h2 className="text-2xl font-bold text-center text-gray-500 mb-5">
+                            Reviews
+                        </h2>
+                        <div className="flex flex-col overflow-y-auto h-80 ">
+                            <TextField label="Search" value={searchFeedback} onChange={(e) => setSearchFeedback(e.target.value)} className=" bg-white border w-full md:w-auto" />
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell className="text-gray-400 text-xl font-bold">Name</TableCell>
+                                        <TableCell className="text-gray-400 text-xl font-bold">Date</TableCell>
+                                        <TableCell className="text-gray-400 text-xl font-bold">Rating</TableCell>
+                                        <TableCell className="text-gray-400 text-xl font-bold">Comment</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {filteredFeedbacks.length === 0 ? (
+                                        <TableRow>
+                                            <TableCell colSpan={4} className="text-gray-500 text-xl font-bold">
+                                                No reviews found
+                                            </TableCell>
+                                        </TableRow>
+                                    ) : (
+                                        filteredFeedbacks.map((feedback) => (
+                                            feedback.patient ? (
+                                                <TableRow key={feedback._id} className="text-gray-500 text-xl font-bold">
+                                                    <TableCell>
+                                                        {feedback.patient.firstName + " " + feedback.patient.lastName}
+                                                    </TableCell>
+                                                    <TableCell>{ new Date(feedback.updatedAt).getDate()}/{new Date(feedback.updatedAt).getMonth()}/{new Date(feedback.updatedAt).getFullYear()}</TableCell>
+                                                    <TableCell>
+                                                        <div className="flex items-center">
+                                                            {Array.from({ length: Math.floor(feedback.rating) }).map((_, index) => (
+                                                                <FaStar key={index} className="text-yellow-400 text-2xl" />
+                                                            ))}
+                                                            {feedback.rating % 1 !== 0 && (
+                                                                <FaStarHalfAlt className="text-yellow-400 text-2xl" />
+                                                            )}
+                                                            <p className="text-gray-500 text-xl font-semibold ml-2">
+                                                                {feedback.rating?.toFixed(1)}
+                                                            </p>
+                                                        </div>
+                                                    </TableCell>
+                                                    <TableCell>{feedback.content}</TableCell>
+                                                </TableRow>
+                                            ) : null
+                                        ))
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </div>
+                    </section>
+                ) : (
+                    <section className="flex flex-col space-x-4 bg-white p-5 col-span-2 border overflow-y-auto ">
+                        <div className="flex justify-center items-center h-screen">
+                            <h1 className="text-3xl font-bold text-gray-800">Loading...</h1>
+                        </div>
+                    </section>
+                )
+            }
+        </main >
     );
 };
 

@@ -31,8 +31,12 @@ function Chatroom() {
         }
     }, [patients, currentUser.patient]);
     if (currentUser.isDoctor) {
-        if (!doctor || doctor === null) return 'Loading...';
-    
+        if (!doctor || doctor === null) return (
+            <div className="flex justify-center items-center h-screen">
+                <h1 className="text-3xl font-bold text-gray-800">Loading...</h1>
+            </div>
+        );
+
         return (
             <div className="w-100 mt-20 shadow-2xl shadow-blue rounded-lg p-3">
                 <ChatEngine
@@ -42,11 +46,16 @@ function Chatroom() {
                     userName={doctor.firstName + " " + doctor.lastName}
                     Email={currentUser.email}
                     userSecret={currentUser.password}
+
                 />
             </div>
         )
     }
-    if (!patient || patient === undefined) return 'Loading...';
+    if (!patient || patient === undefined) return (
+        <div className="flex justify-center items-center h-screen">
+            <h1 className="text-3xl font-bold text-gray-800">Loading...</h1>
+        </div>
+    );
     if (patient) {
         return (
             <div className="w-100 mt-20 shadow-2xl shadow-blue  rounded-lg  p-3">

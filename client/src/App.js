@@ -12,6 +12,7 @@ import DashboardPage from './pages/Dashboard/PatientDashboard';
 import DoctorEdit from './pages/profile/DoctorEdit';
 import PatientEdit from './pages/profile/PatientEdit';
 import Chatroom from './pages/chat/Chatroom';
+import ReviewPage from './pages/review/ReviewPage';
 function App() {
     return (
         <div className="mainWrapper">
@@ -28,6 +29,7 @@ function App() {
                     <Route path="/patient/:id" element={<PatientProfile />} />
                     <Route path="/patient/:id/edit" element={<PatientEdit />} />
                     <Route path="/Chat" element={<Chatroom />} />
+                    <Route path="/review" element={<ReviewPage />} />
                 </Routes>
                  <Footer /> 
             </Router>

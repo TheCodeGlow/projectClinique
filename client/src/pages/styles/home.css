@@ -81,8 +81,9 @@
 
 .header {
     display: flex;
-    justify-content: space-between;
-    align-items: baseline
+    margin: 20px;
+    justify-content: center;
+    align-items: center;
 }
 
 .header__logo {
@@ -100,7 +101,6 @@
 
 .header__nav {
     display: flex;
-    margin-top: 30px;
     padding-left: 300px;
 }
 

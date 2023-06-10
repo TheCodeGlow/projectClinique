@@ -62,7 +62,13 @@ const PatientProfile = () => {
 
     useEffect(() => {
         if (appointments) {
-            const patientAppointments = appointments.filter((appointment) => appointment.patient === id);
+            const patientAppointments = appointments.filter((appointment) => {
+                //filter based on patient id and the appointment status and the appointment date
+                return (
+                    appointment.patient === id && appointment.status === "approved" && new Date(appointment.startTime) >= new Date()
+                );
+            });
+
             setPatientAppointments(patientAppointments);
         }
     }, [appointments, id]);
@@ -192,7 +198,7 @@ const PatientProfile = () => {
                                             Edit Profile
                                         </Link>
                                     </div>
-                                ) }
+                                )}
 
                             </div>
                             <div className="mr-10 ml-10">
@@ -283,7 +289,7 @@ const PatientProfile = () => {
                     )}
                 </div>
             </section>
-            <section className="border p-5 col-span-2">
+            <section className="flex flex-col space-x-4 bg-white p-5 col-span-2 border overflow-y-auto">
                 <div className="PatientAppointments">
                     <h2 className="text-3xl font-bold text-gray-500 border-b pb-4 pl-10">Appointments</h2>
                     {AppointmentsLoading ? (
@@ -291,45 +297,47 @@ const PatientProfile = () => {
                     ) : (
                         <>
                             {patientAppointments.length === 0 ? (
-                                <p className="text-xl font-bold text-gray-500 text-center">No appointments found.</p>
+                                <p className="text-xl font-bold text-gray-500 text-center mt-7 mb-5 ">No appointments found.</p>
                             ) : (
-                                <Table className="appointments-table mt-4">
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell className=""></TableCell>
-                                            <TableCell className="text-gray-400 text-xl font-bold">Date</TableCell>
-                                            <TableCell className="text-gray-400 text-xl font-bold">Time</TableCell>
-                                            <TableCell className="text-gray-400 text-xl font-bold">Details</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {patientAppointments.map((appointment, index) => (
-                                            <TableRow key={appointment._id}>
-                                                <TableCell>
-                                                    <span className=" text-4xl text-sky-600 ml-2 mr-2">
-                                                        <FontAwesomeIcon icon={faCalendarAlt} />
-                                                    </span>
-                                                </TableCell>
-                                                <TableCell className="text-gray-500 text-xl font-bold">
-                                                    {new Date(appointment.startTime).toLocaleDateString()}
-                                                </TableCell>
-                                                <TableCell className="text-gray-500 text-xl font-bold">
-                                                    {new Date(appointment.startTime).toLocaleTimeString([], {
-                                                        hour: "2-digit",
-                                                        minute: "2-digit",
-                                                        hour12: true,
-                                                    })} -{" "}
-                                                    {new Date(appointment.endTime).toLocaleTimeString([], {
-                                                        hour: "2-digit",
-                                                        minute: "2-digit",
-                                                        hour12: true,
-                                                    })}
-                                                </TableCell>
-                                                <TableCell className="text-gray-500 text-xl font-bold">{appointment.details}</TableCell>
+                                <div className="flex flex-col overflow-y-auto h-80 ">
+                                    <Table className="appointments-table mt-4">
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell className=""></TableCell>
+                                                <TableCell className="text-gray-400 text-xl font-bold">Date</TableCell>
+                                                <TableCell className="text-gray-400 text-xl font-bold">Time</TableCell>
+                                                <TableCell className="text-gray-400 text-xl font-bold">Details</TableCell>
                                             </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
+                                        </TableHead>
+                                        <TableBody>
+                                            {patientAppointments.map((appointment, index) => (
+                                                <TableRow key={appointment._id}>
+                                                    <TableCell>
+                                                        <span className=" text-4xl text-sky-600 ml-2 mr-2">
+                                                            <FontAwesomeIcon icon={faCalendarAlt} />
+                                                        </span>
+                                                    </TableCell>
+                                                    <TableCell className="text-gray-500 text-xl font-bold">
+                                                        {new Date(appointment.startTime).toLocaleDateString()}
+                                                    </TableCell>
+                                                    <TableCell className="text-gray-500 text-xl font-bold">
+                                                        {new Date(appointment.startTime).toLocaleTimeString([], {
+                                                            hour: "2-digit",
+                                                            minute: "2-digit",
+                                                            hour12: true,
+                                                        })} -{" "}
+                                                        {new Date(appointment.endTime).toLocaleTimeString([], {
+                                                            hour: "2-digit",
+                                                            minute: "2-digit",
+                                                            hour12: true,
+                                                        })}
+                                                    </TableCell>
+                                                    <TableCell className="text-gray-500 text-xl font-bold">{appointment.details}</TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </div>
                             )}
                         </>
                     )}
