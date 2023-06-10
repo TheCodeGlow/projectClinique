@@ -8,10 +8,10 @@ const passportJwt = require('../config/passport');
 
 router.post('/register', async (req, res, next) => {
     try {
-        const { email, password, firstName, lastName, dateOfBirth, gender, phone, address } = req.body;
+        const { email, password, firstName, lastName, dateOfBirth, gender, weight, height, phone, address } = req.body;
 
         // Check if all fields are provided
-        if (!email || !password || !firstName || !lastName || !dateOfBirth || !gender || !phone || !address) {
+        if (!email || !password || !firstName || !lastName || !dateOfBirth || !gender || !phone || !address || !weight || !height) {
             return res.status(400).json({ error: 'All fields are required' });
         }
 
@@ -31,7 +31,9 @@ router.post('/register', async (req, res, next) => {
             dateOfBirth,
             gender,
             phone,
-            address
+            address,
+            weight,
+            height
         });
 
         await patient.save();

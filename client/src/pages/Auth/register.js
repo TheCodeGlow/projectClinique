@@ -1,27 +1,58 @@
 import React, { useState } from "react";
+import useAuth from "../../hooks/useAuth";
+import { ChatEngine } from 'react-chat-engine';
+import { ChatEngineWrapper, ChatEngineCore } from 'chat-engine';
 
 function FormContainer() {
+    const { register, registerError, isRegisterLoading, } = useAuth();
     // using one state hook to store the form data as an object
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
         dateOfBirth: "",
         gender: "",
+        height: "",
+        weight: "",
         phone: "",
         email: "",
         password: "",
     });
+    // create new user in chatengine
+    const createChatEngineUser = async (formData) => {
+        const projectID = ' 05e8fe9c-bf36-496a-bf00-1c5bfd1daa81';
+        const apiKey = '6b28863a-0809-402f-a801-ade24870c663';
+        const username = formData.firstName + formData.lastName;
+        const secret = formData.password;
 
-    // handling the form submission
+        const chatEngine = ChatEngineCore.create({
+            apiKey,
+            projectID,
+        });
+
+        chatEngine.connect(
+            {
+                username,
+                secret,
+            },
+            () => {
+                console.log('ChatEngine connected');
+            },
+            (error) => {
+                console.log('ChatEngine connection error:', error);
+            }
+        );
+    }
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        // sending the form data to a server or doing some validation here
-        console.log(formData);
+        register(formData);
+        if (!isRegisterLoading && !registerError) {
+            createChatEngineUser(formData);
+            window.location.href = "/";
+        }
     };
 
-    // handling the input change for any field
     const handleChange = (e) => {
-        // updating the state with the new value for the field
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
@@ -107,6 +138,29 @@ function FormContainer() {
                         name="email"
                         placeholder="Enter your email address"
                         value={formData.email}
+                        onChange={handleChange}
+                    />
+                </div>
+                //heigh and weight
+                <div className="FormGroup">
+                    <label htmlFor="height">Height</label>
+                    <input
+                        type="text"
+                        id="height"
+                        name="height"
+                        placeholder="Enter your height"
+                        value={formData.height}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="FormGroup">
+                    <label htmlFor="weight">Weight</label>
+                    <input
+                        type="text"
+                        id="weight"
+                        name="weight"
+                        placeholder="Enter your weight"
+                        value={formData.weight}
                         onChange={handleChange}
                     />
                 </div>

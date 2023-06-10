@@ -39,6 +39,7 @@ function Navbar() {
           <Link to="/dashboard" className="header__navLink">Dashboard</Link>
           <Link to="/doctors" className="header__navLink">Find a doctor</Link>
           <Link to={`/doctor/${currentUser.doctor}`} className="header__navLink">Profile</Link>
+          <Link to="/Chat" className="header__navLink">Chat</Link>
           <Link to="#" class="header__navLink">Testimonials</Link>
           <Link to="#" class="header__navLink">About us</Link>
           <Link to="/" onClick={logout} class="header__navLink">Logout</Link>
@@ -50,6 +51,7 @@ function Navbar() {
             <Link to="/dashboard" className="header__navLink">Dashboard</Link>
             <Link to="/doctors" className="header__navLink">Find a doctor</Link>
             <Link to={`/patient/${currentUser.patient}`} className="header__navLink">Profile</Link>
+            <Link to="/Chat" className="header__navLink">Chat</Link>
             <Link to="#" class="header__navLink">Testimonials</Link>
             <Link to="#" class="header__navLink">About us</Link>
             <Link to="/" onClick={logout} class="header__navLink">Logout</Link>

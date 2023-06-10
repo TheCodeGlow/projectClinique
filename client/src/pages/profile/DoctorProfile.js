@@ -17,6 +17,8 @@ import { Table, TableHead, TableBody, TableRow, TableCell } from '@material-ui/c
 import { FaUserEdit, FaComment, FaArrowRight } from 'react-icons/fa';
 import "../styles/DoctorProfile.css"
 
+import { getOrCreateChat } from 'react-chat-engine';
+
 
 // TODO LIST:
 // DONE 1. Complete the Edit Page for doctor
@@ -35,12 +37,12 @@ const DoctorProfile = () => {
 
     // Booking appointment section logic
     const [patient, setPatient] = useState('');
-
     useEffect(() => {
-        if (user && !user.isDoctor) {
-            setPatient(user._id);
+        if (user && !user.isDoctor && patients) {
+            const currentPatient = patients.find(patient => patient._id === user.patient);
+            setPatient(currentPatient);
         }
-    }, [user]);
+    }, [user, patients]);
     // patient list section logic
     const [patientList, setPatientList] = useState([]);
     const [search, setSearch] = useState('');
@@ -90,7 +92,7 @@ const DoctorProfile = () => {
                 const patient = patients.find(
                     (patient) => patient._id === appointment.patient
                 );
-                if (patient) { appointment.patient = patient; }
+                if (patient) { appointment.patient = patient._id; }
 
             });
             // filter today's appointments
@@ -157,6 +159,24 @@ const DoctorProfile = () => {
         }
     }, [searchPrescription, prescriptionList, patients]);
 
+    const handleMessage = () => {
+        try {
+            getOrCreateChat(
+                {
+                    userName: patient.firstName + " " + patient.lastName,
+                    userSecret: user.password,
+                    email: user.email,
+                    projectID: "05e8fe9c-bf36-496a-bf00-1c5bfd1daa81",
+                },
+                {
+                    is_direct_chat: true,
+                    usernames: [doctor.firstName + " " + doctor.lastName, patient.firstName + " " + patient.lastName],
+                },
+            );
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
 
 
     if (isLoading) return (
@@ -165,8 +185,6 @@ const DoctorProfile = () => {
             <h1 className="text-3xl font-bold text-gray-800">Loading...</h1>
         </div>
     );
-
-    console.log("filteredAppointments! ", filteredAppointments);
 
     return (
         <main className='grid grid-cols-2 shadow-lg shadow-blue rounded-lg m-40' >
@@ -184,7 +202,6 @@ const DoctorProfile = () => {
                         <p className="text-gray-500 font-semibold text-center mt-6">
                             {doctor?.bio}
                         </p>
-
                     </div>
                     {user.doctor === id ? (
                         <div className="flex flex-col text-center">
@@ -196,12 +213,14 @@ const DoctorProfile = () => {
                                 Edit Profile
                             </Link>
                         </div>
-                    ) : (
-                        <button className="flex items-center justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5">
+                    ) : (patient && (
+                        <button className="flex items-center justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5"
+                            onClick={handleMessage}
+                        >
                             <FaComment className="mr-2" />
                             Message
                         </button>
-                    )}
+                    ))}
                 </section>
             ) : (
                 <section className="flex flex-col border p-20 col-span-2 ">
@@ -210,6 +229,7 @@ const DoctorProfile = () => {
                     </div>
                 </section>
             )}
+
             {/* Booking appointment section */}
             {(!isLoading && doctor && patients && user) ? (
                 <section className="flex flex-col bg-white border p-20 col-span-2 ">
@@ -231,7 +251,7 @@ const DoctorProfile = () => {
                             >
                                 <option value="">Select Patient</option>
                                 {patients?.map((patient) => (
-                                    <option key={patient._id} value={patient._id} className='font-bold text-start'>
+                                    <option key={patient._id} value={patient} className='font-bold text-start'>
                                         - {patient.firstName} {patient.lastName}
                                     </option>
                                 ))}
@@ -239,7 +259,7 @@ const DoctorProfile = () => {
                         </div>
                     )}
                     <div className="flex flex-col items-center mt-5 border p-5 rounded-lg overflow-x-hidden">
-                        <DoctorAppointment idPatient={patient} idDoctor={id} />
+                        <DoctorAppointment idPatient={patient._id} idDoctor={id} />
                     </div>
                 </section>
             ) : (

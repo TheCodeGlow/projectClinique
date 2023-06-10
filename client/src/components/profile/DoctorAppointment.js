@@ -49,8 +49,7 @@ const DoctorAppointment = ({ idPatient, idDoctor }) => {
         timeSlots,
         errors,
     } = state;
-    //console log all the states
-    console.log(state);
+
 
 
     const generateMonths = () => {
@@ -189,7 +188,7 @@ const DoctorAppointment = ({ idPatient, idDoctor }) => {
             endTime: endTime,
             details: appointmentDetails,
         };
-        console.log('appointment', appointment);
+        
         createAppointmentMutation.mutate(appointment);
     };
 

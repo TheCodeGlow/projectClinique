@@ -11,6 +11,7 @@ import DoctorProfile from './pages/profile/DoctorProfile';
 import DashboardPage from './pages/Dashboard/PatientDashboard';
 import DoctorEdit from './pages/profile/DoctorEdit';
 import PatientEdit from './pages/profile/PatientEdit';
+import Chatroom from './pages/chat/Chatroom';
 function App() {
     return (
         <div className="mainWrapper">
@@ -26,6 +27,7 @@ function App() {
                     <Route path="/doctor/:id/edit" element={<DoctorEdit />} />
                     <Route path="/patient/:id" element={<PatientProfile />} />
                     <Route path="/patient/:id/edit" element={<PatientEdit />} />
+                    <Route path="/Chat" element={<Chatroom />} />
                 </Routes>
                  <Footer /> 
             </Router>
