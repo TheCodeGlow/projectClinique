@@ -27,6 +27,7 @@ router.post('/patients/:id/prescriptions', passportJwt, async (req, res, next) =
 // Update a prescription for a patient
 router.put('/patients/:id/prescriptions/:prescription_id', passportJwt, async (req, res, next) => {
   try {
+    console.log(req.body);
     const updatedPrescription = await Prescription.findOneAndUpdate(
       { _id: req.params.prescription_id, patient: req.params.id },
       { $set: req.body },

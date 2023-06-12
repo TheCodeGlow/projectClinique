@@ -36,11 +36,11 @@ function Navbar() {
       ) : currentUser.isDoctor ? (
         <div className="header__nav">
           <Link to="/" className="header__navLinkHome">Home</Link>
-          <Link to="/dashboard" className="header__navLink">Dashboard</Link>
+          <Link to="/doctor/dashboard" className="header__navLink">Dashboard</Link>
           <Link to="/doctors" className="header__navLink">Find a doctor</Link>
           <Link to={`/doctor/${currentUser.doctor}`} className="header__navLink">Profile</Link>
           <Link to="/Chat" className="header__navLink">Chat</Link>
-          <Link to="#" class="header__navLink">Testimonials</Link>
+          <Link to="/doctor/prescriptions" class="header__navLink">Prescriptions</Link>
           <Link to="#" class="header__navLink">About us</Link>
           <Link to="/" onClick={logout} class="header__navLink">Logout</Link>
         </div>
@@ -48,12 +48,14 @@ function Navbar() {
         : !currentUser.isDoctor ? (
           <div className="header__nav">
             <Link to="/" className="header__navLinkHome">Home</Link>
-            <Link to="/dashboard" className="header__navLink">Dashboard</Link>
+            <Link to="/patient/dashboard" className="header__navLink">Dashboard</Link>
             <Link to="/doctors" className="header__navLink">Find a doctor</Link>
             <Link to={`/patient/${currentUser.patient}`} className="header__navLink">Profile</Link>
             <Link to="/Chat" className="header__navLink">Chat</Link>
             <Link to="/review" class="header__navLink">Review</Link>
-            <Link to="#" class="header__navLink">About us</Link>
+            <Link to="/patient/prescriptions" class="header__navLink">
+              Prescriptions
+            </Link>
             <Link to="/" onClick={logout} class="header__navLink">Logout</Link>
           </div>
         ) : null}

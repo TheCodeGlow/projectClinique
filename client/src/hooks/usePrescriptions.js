@@ -28,11 +28,12 @@ const useCreatePatientPrescription = () => {
 
     // Use the useMutation hook to make a POST request to /patients/{id}/prescriptions
     const { mutate, isLoading, error, isSuccess } = useMutation(
-        (newPrescription) =>
-            fetch(API_URL + `/api/patients/${newPrescription.id}/prescriptions`, {
+        ({id,newPrescription}) =>
+            fetch(API_URL + `/api/patients/${id}/prescriptions`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
                 body: JSON.stringify(newPrescription),
             }).then((res) => res.json()),
@@ -55,12 +56,13 @@ const useUpdatePatientPrescription = () => {
 
     // Use the useMutation hook to make a PUT request to /patients/{id}/prescriptions/{prescription_id}
     const { mutate, isLoading, error, isSuccess } = useMutation(
-        (updatedPrescription) =>
-            fetch(API_URL + `/api/patients/${updatedPrescription.id}/prescriptions/${updatedPrescription.prescription_id}`,
+        ({id,updatedPrescription}) =>
+            fetch(API_URL + `/api/patients/${id}/prescriptions/${updatedPrescription._id}`,
                 {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
                     },
                     body: JSON.stringify(updatedPrescription),
                 }
@@ -87,6 +89,9 @@ const useDeletePatientPrescription = () => {
         ({ id, prescription_id }) =>
             fetch(API_URL + `/api/patients/${id}/prescriptions/${prescription_id}`, {
                 method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
             }),
         {
             // On success, invalidate the patientPrescriptions query to refetch the updated data
