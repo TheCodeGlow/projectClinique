@@ -3,19 +3,17 @@ import { Table, TableHead, TableBody, TableRow, TableCell } from '@material-ui/c
 
 //compoment imports
 import StatCard from '../../components/dashboard/StatCard';
-import AppointmentRow from '../../components/dashboard/AppointmentRow';
 import NotificationBadge from '../../components/dashboard/NotificationBadge';
 import Calendar from '../../components/dashboard/Calendar';
 import Schedule from '../../components/dashboard/Schedule';
 
 //hooks imports
-import { useAppointments } from '../../hooks/useAppointments';
+import { useAppointments, useUpdateAppointment } from '../../hooks/useAppointments';
 import useAuth from '../../hooks/useAuth';
 import { useDoctors } from '../../hooks/useDoctors';
 import "../styles/Dashboard.css"
 const DashboardPage = () => {
 
-    //TODO: add events for prescriptions and consultations and others
     // state variables
     const [selectedDay, setSelectedDay] = useState(["Mon"]);
     const [date, setDate] = useState(new Date().toISOString());
@@ -23,15 +21,17 @@ const DashboardPage = () => {
     const [patientAppointments, setPatientAppointments] = useState([]);
 
     // Hooks to fetch data from the API
-    const {appointments} = useAppointments();
-    const {doctors} = useDoctors();
+    const { appointments } = useAppointments();
+    const { doctors } = useDoctors();
     const { user } = useAuth();
+    const { rejectAppointment } = useUpdateAppointment();
 
     //get the patient appointments
     useEffect(() => {
         if (appointments && user) {
             const patientAppointments = appointments.filter((appointment) => {
-                return appointment.patient === user.patient;
+                return appointment.patient === user.patient &&
+                appointment.status === "accepted";
             });
             patientAppointments.forEach((appointment) => {
                 appointment.date = new Date(appointment.startTime).toDateString();
@@ -40,7 +40,7 @@ const DashboardPage = () => {
             //only leave upcomming appointments
             const today = new Date();
             const upcommingAppointments = patientAppointments.filter((appointment) => {
-                return appointment.date >= today;
+                return new Date(appointment.date) >= today;
             });
             setPatientAppointments(upcommingAppointments);
         }
@@ -77,7 +77,8 @@ const DashboardPage = () => {
     useEffect(() => {
         if (appointments && user && doctors) {
             const SelectedAppointments = appointments.filter((appointment) => {
-                return appointment.patient === user.patient;
+                return appointment.patient === user.patient &&
+                appointment.status === "accepted";
             });
             //reformate patientAppointments from (startTime: (Date, required) start time of the appointment ;endTime: (Date, required) end time of the appointment ;detials: (String, required) reason for the appointment) to ({ name: 'John Doe', date: 'May 16, 2023', time: '9:00 AM', details: 'Follow-up checkup' })
             const appointmentEvent = SelectedAppointments.map((appointment) => {
@@ -142,12 +143,13 @@ const DashboardPage = () => {
             return patientAppointments.length;
         }
     };
+    
 
     //TODO: complete the stats section
     const stats = [
         { title: 'Doctors', value: getDoctorsNumber(), icon: '👥' },
         { title: 'Appointments', value: getAppointmentNumber(), icon: '📄' },
-        { title: 'Consultations', value: '7', icon: '🗣️' },
+        { title: 'Reviews', value: '7', icon: '🗣️' },
         { title: 'Prescriptions', value: '5', icon: '💊' },
     ];
 
@@ -157,6 +159,8 @@ const DashboardPage = () => {
         { type: 'secondary', count: 3 },
         { type: 'error', count: 5 },
     ];
+   
+
 
     return (
         <div className="dashboard-page">
@@ -178,21 +182,34 @@ const DashboardPage = () => {
                     <Table>
                         <TableHead>
                             <TableRow>
-                                <TableCell>Name</TableCell>
                                 <TableCell>Date</TableCell>
                                 <TableCell>Time</TableCell>
                                 <TableCell>Details</TableCell>
+                                <TableCell>Action</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {patientAppointments.map((appointment) => (
-                                <AppointmentRow
-                                    key={appointment.name}
-                                    name={appointment.name}
-                                    date={appointment.date}
-                                    time={appointment.time}
-                                    details={appointment.details}
-                                />
+                                <TableRow className="appointment-row"
+                                    key={
+                                        appointment._id
+                                    }>
+                                    <TableCell>{appointment.date}</TableCell>
+                                    <TableCell>{appointment.time}</TableCell>
+                                    <TableCell>{appointment.details}</TableCell>
+                                    <TableCell>
+                                        <button
+                                            className="reject-button"
+                                            onClick={() => {
+                                                rejectAppointment(appointment._id);
+                                            }}
+                                        >
+                                            Cancel
+                                        </button>
+                                    </TableCell>
+
+
+                                </TableRow>
                             ))}
                         </TableBody>
                     </Table>

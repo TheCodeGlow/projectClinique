@@ -44,9 +44,6 @@ const DoctorProfile = () => {
         if (feedbacks && patients && user) {
             const FeedbackWithPatient = feedbacks.map(feedback => {
                 const patient = patients.find(patient => {
-                    console.log("patient._id", patient._id);
-                    console.log("feedback.patient", feedback.patient);
-                    console.log("test: ", patient._id === feedback.patient);
                     return patient._id === feedback.patient
                 });
                 if (patient) {
@@ -78,17 +75,16 @@ const DoctorProfile = () => {
 
     // Booking appointment section logic
     useEffect(() => {
-        if (user && !user.isDoctor && patients) {
-            const currentPatient = patients.find(patient => patient._id === user.patient);
-            setPatient(currentPatient);
+        if (user && !user.isDoctor ) {
+            setPatient(user.patient);
         }
-    }, [user, patients]);
+    }, [user]);
 
     // appointment list section logic
     useEffect(() => {
         if (appointments && doctor && patients && user) {
             // Get all appointments that have the doctor
-            const appointmentList = appointments.filter(appointment => appointment.doctor === doctor._id);
+            const appointmentList = appointments.filter(appointment => appointment.doctor === doctor._id && appointment.status === 'accepted');
 
             // Add patient info to each appointment
             const updatedAppointments = appointmentList.map(appointment => {
@@ -144,6 +140,10 @@ const DoctorProfile = () => {
     }, [searchAppointment, appointmentList, patients]);
 
     const handleMessage = () => {
+        const patient = patients.find((patient) => {
+            return patient._id === user.patient;
+        });
+
         getOrCreateChat({
             userName: patient.firstName + " " + patient.lastName,
             userSecret: user.password,
@@ -156,7 +156,6 @@ const DoctorProfile = () => {
             },);
 
     }
-    console.log("doctor", filteredFeedbacks);
     if (isLoading) return (
         //loading
         <div className="flex justify-center items-center h-screen">
@@ -205,7 +204,7 @@ const DoctorProfile = () => {
                                 Edit Profile
                             </Link>
                         </div>
-                    ) : (patient && (
+                    ) : (!user.isDoctor && (
                         <button className="flex items-center justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5"
                             onClick={handleMessage}
                         >
@@ -245,7 +244,7 @@ const DoctorProfile = () => {
                                 >
                                     <option value="">Select Patient</option>
                                     {patients?.map((patient) => (
-                                        <option key={patient._id} value={patient} className='font-bold text-start'>
+                                        <option key={patient._id} value={patient._id} className='font-bold text-start'>
                                             - {patient.firstName} {patient.lastName}
                                         </option>
                                     ))}
@@ -253,7 +252,7 @@ const DoctorProfile = () => {
                             </div>
                         )}
                         <div className="flex flex-col items-center mt-5 border p-5 rounded-lg overflow-x-hidden">
-                            <DoctorAppointment idPatient={patient._id} idDoctor={id} />
+                            <DoctorAppointment idPatient={patient} idDoctor={id} />
                         </div>
                     </section>
                 ) : (

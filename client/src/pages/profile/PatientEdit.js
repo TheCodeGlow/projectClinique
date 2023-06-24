@@ -34,7 +34,7 @@ const PatientEdit = () => {
     }
 
     return (
-        <form className='mt-20 shadow-lg w-3/5 p-16' onSubmit={handleSubmit(submitForm)}
+        <form className='mt-20 shadow-lg w-3/5 p-16 self-center' onSubmit={handleSubmit(submitForm)}
             encType='multipart/form-data'
         >
             <div className="mb-4 self-center">

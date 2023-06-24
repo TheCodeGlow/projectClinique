@@ -30,8 +30,8 @@ function Navbar() {
           <Link to="/" className="header__navLinkHome">Home</Link>
           <Link to="/login" className="header__navLink">Login</Link>
           <Link to="/register" className="header__navLink">Register</Link>
-          <Link to="#" class="header__navLink">Testimonials</Link>
-          <Link to="#" class="header__navLink">About us</Link>
+          <Link to="#" className="header__navLink">Testimonials</Link>
+          <Link to="#" className="header__navLink">About us</Link>
         </div>
       ) : currentUser.isDoctor ? (
         <div className="header__nav">
@@ -40,9 +40,9 @@ function Navbar() {
           <Link to="/doctors" className="header__navLink">Find a doctor</Link>
           <Link to={`/doctor/${currentUser.doctor}`} className="header__navLink">Profile</Link>
           <Link to="/Chat" className="header__navLink">Chat</Link>
-          <Link to="/doctor/prescriptions" class="header__navLink">Prescriptions</Link>
-          <Link to="#" class="header__navLink">About us</Link>
-          <Link to="/" onClick={logout} class="header__navLink">Logout</Link>
+          <Link to="/doctor/prescriptions" className="header__navLink">Prescriptions</Link>
+          <Link to="#" className="header__navLink">About us</Link>
+          <Link to="/" onClick={logout} className="header__navLink">Logout</Link>
         </div>
       )
         : !currentUser.isDoctor ? (
@@ -52,11 +52,11 @@ function Navbar() {
             <Link to="/doctors" className="header__navLink">Find a doctor</Link>
             <Link to={`/patient/${currentUser.patient}`} className="header__navLink">Profile</Link>
             <Link to="/Chat" className="header__navLink">Chat</Link>
-            <Link to="/review" class="header__navLink">Review</Link>
-            <Link to="/patient/prescriptions" class="header__navLink">
+            <Link to="/review" className="header__navLink">Review</Link>
+            <Link to="/patient/prescriptions" className="header__navLink">
               Prescriptions
             </Link>
-            <Link to="/" onClick={logout} class="header__navLink">Logout</Link>
+            <Link to="/" onClick={logout} className="header__navLink">Logout</Link>
           </div>
         ) : null}
     </header>

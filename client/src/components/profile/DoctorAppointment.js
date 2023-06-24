@@ -97,7 +97,9 @@ const DoctorAppointment = ({ idPatient, idDoctor }) => {
         const appointmentsForSelectedDay = appointments.filter(
             (appointment) => {
                 const appointmentDate = appointment.startTime.split('T')[0];
-                return (appointmentDate === selectedDayDate && appointment.doctor === idDoctor)
+                return (appointmentDate === selectedDayDate 
+                    && appointment.doctor === idDoctor
+                    && appointment.status === 'accepted')
             }
         );
         for (let i = 1; i <= 24; i++) {

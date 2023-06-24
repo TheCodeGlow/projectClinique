@@ -1,20 +1,10 @@
-// Prescription Schema
-// patient: (ObjectId, ref: 'Patient', required) reference to the patient associated with the prescription
-// date: (Date, required) date of the prescription
-// medication: (String, required) name of the medication prescribed
-// dosage: (String, required) dosage of the medication prescribed
-// instructions: (String, required) instructions for taking the medication prescribed
-// refills: (Number, required) number of refills of the prescription
-// refillDate: (Date, required) date of the next refill of the prescription
-
-import react, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
     usePatientPrescriptions,
     useCreatePatientPrescription,
     useUpdatePatientPrescription,
     useDeletePatientPrescription,
 } from "../../hooks/usePrescriptions";
-import { useDoctors } from '../../hooks/useDoctors';
 import useAuth from '../../hooks/useAuth';
 import { usePatients } from '../../hooks/usePatients';
 import "../styles/DoctorPage.css"
@@ -29,25 +19,21 @@ const DoctorPrescriptions = () => {
     const [refills, setRefills] = useState(0);
     const [refillDate, setRefillDate] = useState("");
     const [selectedPrescription, setSelectedPrescription] = useState(null);
-    const { patients, isLoading: patientLoading } = usePatients();
-    const { prescriptions, isLoading: prescriptionLoading } =
-        usePatientPrescriptions(patient);
+    const { patients} = usePatients();
+    const { prescriptions } = usePatientPrescriptions(patient);
 
     const {
         mutate: createPrescription,
-        isLoading: createLoading,
         isError: createError,
         isSuccess: createSuccess,
     } = useCreatePatientPrescription();
     const {
         mutate: updatePrescription,
-        isLoading: updateLoading,
         isError: updateError,
         isSuccess: updateSuccess,
     } = useUpdatePatientPrescription();
     const {
         mutate: deletePrescription,
-        isLoading: deleteLoading,
         isError: deleteError,
         isSuccess: deleteSuccess,
     } = useDeletePatientPrescription();

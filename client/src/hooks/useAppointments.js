@@ -71,13 +71,52 @@ const useUpdateAppointment = () => {
         }
     };
 
+    const approveAppointment = async (id) => {
+        try {
+            const response = await axios.put(
+                `${API_URL}/api/appointments/${id}/approve`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+            queryClient.invalidateQueries("appointments");
+            return response.data;
+        } catch (error) {
+            throw new Error("Failed to approve appointment");
+        }
+    };
+
+    const rejectAppointment = async (id) => {
+        try {
+            const response = await axios.put(
+                `${API_URL}/api/appointments/${id}/reject`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+            queryClient.invalidateQueries("appointments");
+            return response.data;
+            
+        } catch (error) {
+            throw new Error("Failed to reject appointment");
+        }
+    };
+
     const mutation = useMutation(updateAppointment, {
         onSuccess: () => {
             queryClient.invalidateQueries("appointments");
         },
     });
 
-    return mutation;
+    return { updateAppointment: mutation, approveAppointment, rejectAppointment };
 };
 
 const useCancelAppointment = () => {
