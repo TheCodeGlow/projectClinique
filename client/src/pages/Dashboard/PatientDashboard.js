@@ -31,7 +31,7 @@ const DashboardPage = () => {
         if (appointments && user) {
             const patientAppointments = appointments.filter((appointment) => {
                 return appointment.patient === user.patient &&
-                appointment.status === "accepted";
+                    appointment.status === "accepted";
             });
             patientAppointments.forEach((appointment) => {
                 appointment.date = new Date(appointment.startTime).toDateString();
@@ -78,7 +78,7 @@ const DashboardPage = () => {
         if (appointments && user && doctors) {
             const SelectedAppointments = appointments.filter((appointment) => {
                 return appointment.patient === user.patient &&
-                appointment.status === "accepted";
+                    appointment.status === "accepted";
             });
             //reformate patientAppointments from (startTime: (Date, required) start time of the appointment ;endTime: (Date, required) end time of the appointment ;detials: (String, required) reason for the appointment) to ({ name: 'John Doe', date: 'May 16, 2023', time: '9:00 AM', details: 'Follow-up checkup' })
             const appointmentEvent = SelectedAppointments.map((appointment) => {
@@ -102,9 +102,12 @@ const DashboardPage = () => {
 
     //get the events of the selected day
     const FilteredEvents = () => {
-        //filter the events based on the date
+        //filter the events based on the date and 2 days after it
         const filteredEvents = events.filter((event) => {
-            if (event.startDate.getDate() === new Date(date).getDate() &&
+
+            if ((event.startDate.getDate() === new Date(date).getDate() ||
+                event.startDate.getDate() === (new Date(date).getDate() + 1) ||
+                event.startDate.getDate() === (new Date(date).getDate() + 2)) &&
                 event.startDate.getMonth() === new Date(date).getMonth() &&
                 event.startDate.getFullYear() === new Date(date).getFullYear())
                 return event;
@@ -143,7 +146,7 @@ const DashboardPage = () => {
             return patientAppointments.length;
         }
     };
-    
+
 
     //TODO: complete the stats section
     const stats = [
@@ -159,7 +162,7 @@ const DashboardPage = () => {
         { type: 'secondary', count: 3 },
         { type: 'error', count: 5 },
     ];
-   
+
 
 
     return (

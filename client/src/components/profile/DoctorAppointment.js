@@ -157,7 +157,7 @@ const DoctorAppointment = ({ idPatient, idDoctor }) => {
         const month = selectedMonth < 10 ? '0' + selectedMonth : selectedMonth;
         const day = selectedDay < 10 ? '0' + selectedDay : selectedDay;
         const startTimeSlot = selectedTimeSlot - 1;
-        const endTimeSlot = selectedTimeSlot < 9 ? selectedTimeSlot + 1 : 10;
+        const endTimeSlot = selectedTimeSlot < 10 ? selectedTimeSlot  : selectedTimeSlot ;
 
         const startDate = new Date(Date.UTC(currentYear, month - 1, day, startTimeSlot));
         const endDate = new Date(Date.UTC(currentYear, month - 1, day, endTimeSlot));

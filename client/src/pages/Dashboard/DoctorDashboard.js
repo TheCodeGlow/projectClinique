@@ -95,7 +95,7 @@ const DoctorDashboard = () => {
   useEffect(() => {
     if (appointments && user && patients) {
       const SelectedAppointments = appointments.filter((appointment) => {
-        return appointment.doctor === user.doctor;
+        return appointment.doctor === user.doctor && appointment.status === "accepted"
       });
       const appointmentEvent = SelectedAppointments.map((appointment) => {
         const time = new Date(appointment.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' - ' + new Date(appointment.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -120,11 +120,14 @@ const DoctorDashboard = () => {
 
   //get the events of the selected day
   const FilteredEvents = () => {
-    //filter the events based on the date
+    //filter the events based on the date and 2 days after it
     const filteredEvents = events.filter((event) => {
-      if (event.startDate.getDate() === new Date(date).getDate() &&
+  
+      if ((event.startDate.getDate() === new Date(date).getDate() ||
+        event.startDate.getDate() === (new Date(date).getDate() + 1) ||
+        event.startDate.getDate() === (new Date(date).getDate() + 2)) &&
         event.startDate.getMonth() === new Date(date).getMonth() &&
-        event.startDate.getFullYear() === new Date(date).getFullYear())
+        event.startDate.getFullYear() === new Date(date).getFullYear() )
         return event;
       else return null;
     });
@@ -182,7 +185,9 @@ const DoctorDashboard = () => {
   return (
     <div className="dashboard-page">
       <div className="left-part">
-        <h3>Statistics</h3>
+        <h3 
+          className="text-4xl font-bold text-gray-800 mb-4"
+        >Statistics</h3>
         <div className="statistics-section">
           {stats.map((stat) => (
             <StatCard key={stat.title} title={stat.title} value={stat.value} icon={stat.icon} />
@@ -190,12 +195,16 @@ const DoctorDashboard = () => {
         </div>
 
         <div className="schedule-section">
-          <h4>Schedule</h4>
+          <h4
+           className="text-4xl font-bold text-gray-800 mb-4"
+          >Schedule</h4>
           <Schedule selectedDay={days(selectedDay)} events={FilteredEvents()} />
         </div>
 
         <div className="appointment-section">
-          <h3>Upcoming Appointments</h3>
+          <h3
+           className="text-4xl font-bold text-gray-800 mb-4 mt-4"
+          >Upcoming Appointments</h3>
           <Table>
             <TableHead>
               <TableRow>
@@ -208,7 +217,16 @@ const DoctorDashboard = () => {
             </TableHead>
             <TableBody>
               {doctorAppointments.map((appointment) => (
-                <TableRow className="appointment-row"
+                <TableRow 
+                  className={`${
+                    appointment.status === "pending"
+                      ? "bg-stone-300"
+                      : appointment.status === "accepted"
+                      ? "bg-green-100"
+                      : "bg-red-100"
+                  }`}
+                  
+
                   key={
                     appointment._id
                   }>

@@ -2,6 +2,7 @@ import React from 'react';
 import { Typography } from '@material-ui/core';
 const Schedule = ({ selectedDay, events }) => {
 
+
   const scheduleTimes = generateTimeSlots();
 
   function generateTimeSlots() {
@@ -25,12 +26,42 @@ const Schedule = ({ selectedDay, events }) => {
   }
 
   function isEventTimeWithinSlot(event, slotTime) {
-    const [eventStart, eventEnd] = event.time.split(" - ");
-    const eventStartTime = new Date(`2000-01-01 ${eventStart}`).getTime();
-    const eventEndTime = new Date(`2000-01-01 ${eventEnd}`).getTime();
-    const slotTimeValue = new Date(`2000-01-01 ${slotTime}`).getTime();
-    return slotTimeValue >= eventStartTime && slotTimeValue <= eventEndTime;
+    //endDate: Sun Jul 02 2023 11:00:00 GMT+0100 (UTC+01:00) 
+    //startDate: Sun Jul 02 2023 14:00:00 GMT+0100 (UTC+01:00) 
+    const eventStart = event.startDate;
+    const eventEnd = event.endDate;
+    const eventStartTime = eventStart.toLocaleString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    });
+    const eventEndTime = eventEnd.toLocaleString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    });
+
+    const eventStartTimeValue = getTimeValue(eventStartTime);
+    const eventEndTimeValue = getTimeValue(eventEndTime);
+    const slotTimeValue = getTimeValue(slotTime);
+    
+    return slotTimeValue >= eventStartTimeValue &&  slotTimeValue <= eventEndTimeValue;
   }
+
+  function getTimeValue(time) {
+    const [hourString, minuteString, period] = time.split(/:| /);
+    let hours = Number(hourString);
+    const minutes = Number(minuteString);
+
+    if (period === "PM" && hours !== 12) {
+      hours += 12;
+    } else if (period === "AM" && hours === 12) {
+      hours = 0;
+    }
+
+    return hours * 60 + minutes;
+  }
+
 
 
   return (
@@ -51,7 +82,9 @@ const Schedule = ({ selectedDay, events }) => {
                 <td className="day-column">{day}</td>
                 {scheduleTimes.map((time) => {
                   const event = events.find(
-                    (event) => event.day.includes(day) && isEventTimeWithinSlot(event, time)
+                    (event) => {
+                      return event.day.includes(day) && isEventTimeWithinSlot(event, time)
+                    }
                   );
                   return (
                     <td key={`${day}-${time}`}>
